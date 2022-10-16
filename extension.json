@@ -1,7 +1,7 @@
 {
     "name": "EzxGAds",
     "version": "1.0.0",
-    "author": "EZXIST",
+    "author": "exizt",
     "url": "https://www.mediawiki.org/wiki/Extension:Example",
     "description": "구글 애드센스를 적용시키기 위한 확장기능",
     "license-name": "MIT",
