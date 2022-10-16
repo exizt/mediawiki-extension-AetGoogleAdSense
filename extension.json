@@ -1,0 +1,26 @@
+{
+    "name": "EzxGAds",
+    "version": "1.0.0",
+    "author": "EZXIST",
+    "url": "https://www.mediawiki.org/wiki/Extension:Example",
+    "description": "구글 애드센스를 적용시키기 위한 확장기능",
+    "license-name": "MIT",
+    "type": "other",
+    "requires": {
+        "MediaWiki": ">= 1.35.0"
+    },
+    "AutoloadClasses": {
+        "EzxGAdsHooks": "includes/EzxGAdsHooks.php"
+    },
+    "Hooks": {
+        "SiteNoticeAfter": "EzxGAdsHooks::onSiteNoticeAfterGAdsCTop",
+        "SkinAfterContent": "EzxGAdsHooks::onSkinAfterContentGAdsCBottom"
+    },
+    "ResourceFileModulePaths": {
+        "localBasePath": "resources",
+        "remoteExtPath": "EzxGAds/resources"
+    },
+    "ResourceModules": {
+    },
+    "manifest_version": 2
+}
