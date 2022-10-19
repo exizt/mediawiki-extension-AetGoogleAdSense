@@ -10,7 +10,7 @@
         "MediaWiki": ">= 1.35.0"
     },
     "AutoloadClasses": {
-        "AetGoogleAdSense": "includes/AetGoogleAdSense.php"
+        "AetGoogleAdSense": "src/AetGoogleAdSense.php"
     },
     "Hooks": {
         "SiteNoticeAfter": "AetGoogleAdSense::onSiteNoticeAfterGAdsCTop",
