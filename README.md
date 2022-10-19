@@ -9,9 +9,10 @@
 # 설정
 
 ## 옵션
-* ClientId : 애드센스 id key 값. (예: ca-pub-xxxxxxxxx)
-* SlotIdContentTop : 콘텐츠 상단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
-* SlotIdContentBottom : 콘텐츠 히단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
-* AnonOnly : '비회원'만 애드센스 노출하기.
-* DisallowedIPs : 애드센스를 보여주지 않을 IP 목록.
+* client_id : 애드센스 id key 값. (예: ca-pub-xxxxxxxxx)
+* unit_id_content_top : 콘텐츠 상단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
+* unit_id_content_bottom : 콘텐츠 히단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
+* anon_only : '비회원'만 애드센스 노출하기.
+* exclude_ip_list : 애드센스를 보여주지 않을 IP 목록.
+
 
