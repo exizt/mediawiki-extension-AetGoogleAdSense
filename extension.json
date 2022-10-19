@@ -1,24 +1,24 @@
 {
-    "name": "EzxGAds",
+    "name": "AetGoogleAdSense",
     "version": "1.0.0",
-    "author": "exizt",
-    "url": "https://www.mediawiki.org/wiki/Extension:Example",
+    "author": "[https://github.com/exizt exizt]",
+    "url": "https://github.com/exizt/mw-ext-AetGoogleAdSense",
     "description": "구글 애드센스를 적용시키기 위한 확장기능",
-    "license-name": "MIT",
+    "license-name": "GPL-2.0-or-later",
     "type": "other",
     "requires": {
         "MediaWiki": ">= 1.35.0"
     },
     "AutoloadClasses": {
-        "EzxGAdsHooks": "includes/EzxGAdsHooks.php"
+        "AetGoogleAdSense": "includes/AetGoogleAdSense.php"
     },
     "Hooks": {
-        "SiteNoticeAfter": "EzxGAdsHooks::onSiteNoticeAfterGAdsCTop",
-        "SkinAfterContent": "EzxGAdsHooks::onSkinAfterContentGAdsCBottom"
+        "SiteNoticeAfter": "AetGoogleAdSense::onSiteNoticeAfterGAdsCTop",
+        "SkinAfterContent": "AetGoogleAdSense::onSkinAfterContentGAdsCBottom"
     },
     "ResourceFileModulePaths": {
         "localBasePath": "resources",
-        "remoteExtPath": "EzxGAds/resources"
+        "remoteExtPath": "AetGoogleAdSense/resources"
     },
     "ResourceModules": {
     },

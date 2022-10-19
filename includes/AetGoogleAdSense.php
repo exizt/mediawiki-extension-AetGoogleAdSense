@@ -5,7 +5,7 @@
  * @file
  */
 
-class EzxGAdsHooks {
+class AetGoogleAdSense {
 	// 설정값을 갖게 되는 멤버 변수
 	private static $config;
 	// 이용 가능한지 여부 (isAvailable 메소드에서 체크함)
@@ -225,11 +225,11 @@ EOT;
 		// 로깅
 		if($isDebug){
 			if(is_string($msg)){
-				wfDebugLog('EzxGAds', $msg);
+				wfDebugLog('AetGoogleAdSense', $msg);
 			} else if(is_object($msg) || is_array($msg)){
-				wfDebugLog('EzxGAds', json_encode($msg));
+				wfDebugLog('AetGoogleAdSense', json_encode($msg));
 			} else {
-				wfDebugLog('EzxGAds', json_encode($msg));
+				wfDebugLog('AetGoogleAdSense', json_encode($msg));
 			}
 		} else {
 			return false;
