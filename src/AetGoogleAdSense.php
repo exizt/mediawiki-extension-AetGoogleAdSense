@@ -131,7 +131,7 @@ EOT;
 		# self::debugLog("isAvailable");
 		# self::debugLog($ns);
 
-		// 메인 페이지에서만 나오도록 함. 특수문서 등에서 나타나지 않도록.
+		// 메인 이름공간의 페이지에서만 나오도록 함. 특수문서 등에서 나타나지 않도록.
 		if( $titleObj->getNamespace() != NS_MAIN ){
 			self::$_isAvailable = false;
 			return false;
