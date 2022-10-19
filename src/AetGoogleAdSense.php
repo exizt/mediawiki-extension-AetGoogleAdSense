@@ -144,7 +144,7 @@ EOT;
 		}
 
 		# 본문의 길이가 짧을 때에는 광고를 출력하지 않도록 설정.
-		if( $titleObj->getLength() <= 100 ) {
+		if( $titleObj->getLength() <= $config['min_length'] ) {
 			self::$_isAvailable = false;
 			return false;
 		}
@@ -182,6 +182,7 @@ EOT;
 			'unit_id_content_bottom' => '',
 			'anon_only' => false,
 			'exclude_ip_list' => array(),
+			'min_length' => 500,
 			'debug' => false
 		];
 		

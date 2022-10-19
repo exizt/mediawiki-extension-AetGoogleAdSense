@@ -9,10 +9,10 @@ AetGoogleAdSense (Mediawiki Google Adsense Extension)
 # 설정
 
 ## 옵션
-* `client_id` : 애드센스 id key 값. (예: ca-pub-xxxxxxxxx)
-* `unit_id_content_top` : 콘텐츠 상단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
-* `unit_id_content_bottom` : 콘텐츠 히단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
-* `anon_only` : '비회원'만 애드센스 노출하기.
-* `exclude_ip_list` : 애드센스를 보여주지 않을 IP 목록.
-
+- `client_id` : 애드센스 id key 값. (예: ca-pub-xxxxxxxxx)
+- `unit_id_content_top` : 콘텐츠 상단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
+- `unit_id_content_bottom` : 콘텐츠 히단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
+- `anon_only` : '비회원'만 애드센스 노출하기. (기본값: `false`)
+- `exclude_ip_list` : 애드센스를 보여주지 않을 IP 목록.
+- `min_length` : 애드센스가 보여질 최소 문서의 본문 길이. (기본값: `500`)
 
