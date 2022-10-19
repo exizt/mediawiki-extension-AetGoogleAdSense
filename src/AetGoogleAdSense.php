@@ -7,7 +7,7 @@
 
 class AetGoogleAdSense {
 	// 설정값을 갖게 되는 멤버 변수
-	private static $config;
+	private static $config = null;
 	// 이용 가능한지 여부 (isAvailable 메소드에서 체크함)
 	private static $_isAvailable = true;
 
@@ -31,7 +31,7 @@ class AetGoogleAdSense {
 		}
 
 		# 해당되는 slot id가 지정되지 않았으면 보이지 않게 함
-		if( ! self::isOptionSet($config, 'SlotIdContentTop') ){
+		if( ! self::isOptionSet($config, 'unit_id_content_top') ){
 			return;
 		}
 
@@ -44,8 +44,8 @@ class AetGoogleAdSense {
 		$siteNotice .= <<< EOT
 <ins class="adsbygoogle"
      style="display:block"
-     data-ad-client="{$config['ClientId']}"
-     data-ad-slot="{$config['SlotIdContentTop']}"
+     data-ad-client="{$config['client_id']}"
+     data-ad-slot="{$config['unit_id_content_top']}"
      data-ad-format="auto"
      data-full-width-responsive="true"></ins>
 <script>
@@ -75,7 +75,7 @@ EOT;
 		}
 
 		# 해당되는 slot id가 지정되지 않았으면 보이지 않게 함
-		if( ! self::isOptionSet($config, 'SlotIdContentBottom') ){
+		if( ! self::isOptionSet($config, 'unit_id_content_bottom') ){
 			return;
 		}
 
@@ -87,8 +87,8 @@ EOT;
 		$data .= <<< EOT
 <ins class="adsbygoogle"
 		style="display:block"
-		data-ad-client="{$config['ClientId']}"
-		data-ad-slot="{$config['SlotIdContentBottom']}"
+		data-ad-client="{$config['client_id']}"
+		data-ad-slot="{$config['unit_id_content_bottom']}"
 		data-ad-format="auto"
 		data-full-width-responsive="true"></ins>
 <script>
@@ -108,22 +108,22 @@ EOT;
 			return false;
 		}
 
-		# ClientId가 지정되지 않았으면 보여지지 않도록 한다.
-		if( ! self::isOptionSet($config, 'ClientId') ){
+		# 'client_id'가 지정되지 않았으면 보여지지 않도록 한다.
+		if( ! self::isOptionSet($config, 'client_id') ){
 			self::$_isAvailable = false;
 			return false;
 		}
 
 		# 익명 사용자에게만 보여지게 하는 옵션이 있으면, 익명 사용자에게만 보여준다.
-		if ( $isRegistered && $config['AnonOnly'] ) {
+		if ( $isRegistered && $config['anon_only'] ) {
 			self::$_isAvailable = false;
 			return false;
 		}
 
 		# 특정 아이피에서는 애드센스를 노출하지 않도록 한다. (예를 들어, 관리자)
-		if ( ! empty($config['DisallowedIPs']) ){
+		if ( ! empty($config['exclude_ip_list']) ){
 			$remoteAddr = $_SERVER["REMOTE_ADDR"] ?? '';
-			if( in_array($remoteAddr, $config['DisallowedIPs']) ){
+			if( in_array($remoteAddr, $config['exclude_ip_list']) ){
 				return false;
 			}
 		}
@@ -143,6 +143,12 @@ EOT;
 			return false;
 		}
 
+		# 본문의 길이가 짧을 때에는 광고를 출력하지 않도록 설정.
+		if( $titleObj->getLength() <= 100 ) {
+			self::$_isAvailable = false;
+			return false;
+		}
+
 		return true;
 	}
 
@@ -151,8 +157,10 @@ EOT;
 	 */
 	public static function getConfiguration(){
 		# 한 번 로드했다면, 그 후에는 로드하지 않도록 처리.
-		if(is_array(self::$config)){
-			return self::$config;
+		if(self::$config){
+			if(isset(self::$config['client_id'])){
+				return self::$config;
+			}
 		}
 		self::debugLog('::getConfiguration');
 
@@ -161,20 +169,20 @@ EOT;
 		/*
 		* 설정 기본값
 		* 
-		* ClientId : 애드센스 id key 값. (예: ca-pub-xxxxxxxxx)
-		* SlotIdContentTop : 콘텐츠 상단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
-		* SlotIdContentBottom : 콘텐츠 히단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
-		* AnonOnly : '비회원'만 애드센스 노출하기.
-		* DisallowedIPs : 애드센스를 보여주지 않을 IP 목록.
+		* client_id : 애드센스 id key 값. (예: ca-pub-xxxxxxxxx)
+		* unit_id_content_top : 콘텐츠 상단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
+		* unit_id_content_bottom : 콘텐츠 히단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
+		* anon_only : '비회원'만 애드센스 노출하기.
+		* exclude_ip_list : 애드센스를 보여주지 않을 IP 목록.
 		*/
 		$config = [
-			'Enabled' => false,
-			'ClientId' => '',
-			'SlotIdContentTop' => '',
-			'SlotIdContentBottom' => '',
-			'AnonOnly' => false,
-			'DisallowedIPs' => array(),
-			'Debug' => false
+			'enabled' => false,
+			'client_id' => '',
+			'unit_id_content_top' => '',
+			'unit_id_content_bottom' => '',
+			'anon_only' => false,
+			'exclude_ip_list' => array(),
+			'debug' => false
 		];
 		
 		# 설정값 병합
