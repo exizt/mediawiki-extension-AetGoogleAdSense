@@ -74,17 +74,18 @@ EOT;
 			return;
 		}
 
-		# 해당되는 slot id가 지정되지 않았으면 보이지 않게 함
-		if( ! self::isOptionSet($config, 'unit_id_content_bottom') ){
-			return;
-		}
-
-		$data .= <<<EOT
+		# bottom_id가 지정되어있거나, top_id와 bottom_id 둘 다 없는 경우(자동광고만 사용)에 출력.
+		# 조건이 (b||!t&&!b)이므로, 줄이면 (b||!t)
+		if( self::isOptionSet($config, 'unit_id_content_bottom') || !self::isOptionSet($config, 'unit_id_content_top') ){
+			$data .= <<<EOT
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$config['client_id']}"
 		crossorigin="anonymous"></script>
 EOT;
-		
-		$data .= <<< EOT
+		}
+
+		# bottom_id가 지정되어있는 경우에만 출력.
+		if( self::isOptionSet($config, 'unit_id_content_bottom') ){
+			$data .= <<< EOT
 <ins class="adsbygoogle"
 		style="display:block"
 		data-ad-client="{$config['client_id']}"
@@ -95,6 +96,8 @@ EOT;
 		(adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 EOT;
+		}
+
 		return true;
 	}
 

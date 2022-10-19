@@ -16,3 +16,7 @@ AetGoogleAdSense (Mediawiki Google Adsense Extension)
 - `exclude_ip_list` : 애드센스를 보여주지 않을 IP 목록.
 - `min_length` : 애드센스가 보여질 최소 문서의 본문 길이. (기본값: `500`)
 
+
+참고
+1. `client_id`가 입력되고, `unit_id_content_top`과 `unit_id_content_bottom`이 입력 안 된 경우는 => 자동 광고만 허가.
+2. `client_id`가 빈 값인 경우에는 동작하지 않음.
