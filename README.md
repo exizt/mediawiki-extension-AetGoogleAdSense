@@ -19,4 +19,4 @@ AetGoogleAdSense (Mediawiki Google Adsense Extension)
 
 참고
 1. `client_id`가 입력되고, `unit_id_content_top`과 `unit_id_content_bottom`이 입력 안 된 경우는 => 자동 광고만 허가.
-2. `client_id`가 빈 값인 경우에는 동작하지 않음.
+2. `client_id`가 빈 값이거나 없는 경우에는 동작하지 않음.
