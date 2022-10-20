@@ -26,7 +26,6 @@ class AetGoogleAdSense {
 		# 설정값 조회
 		$config = self::getConfiguration();
 		if( $config['article_view_header_hook'] ){
-			// 
 			$result = self::makeTopBannerHTML( $article->getContext()->getUser()->isRegistered(), $article->getContext()->getTitle() );
 			if($result){
 				$article->getContext()->getOutput()->addHTML($result);
@@ -94,7 +93,7 @@ class AetGoogleAdSense {
 	/**
 	 * 상단 배너 광고
 	 */
-	public static function makeTopBannerHTML( $isRegistered, $titleObject ) {
+	private static function makeTopBannerHTML( $isRegistered, $titleObject ) {
 		self::debugLog('::makeTopBannerHTML');
 
 		// 설정 로드
@@ -117,7 +116,7 @@ class AetGoogleAdSense {
 	/**
 	 * 하단 배너 광고
 	 */
-	public static function makeBottomBannerHTML( $isRegistered, $titleObject ) {
+	private static function makeBottomBannerHTML( $isRegistered, $titleObject ) {
 		self::debugLog('::makeBottomBannerHTML');
 
 		// 설정 로드
@@ -141,6 +140,9 @@ class AetGoogleAdSense {
 	 * 자동광고의 HTML 생성
 	 */
 	private static function makeAutoAdsHTML( $clientId ){
+		if(! $clientId ){
+			return '';
+		}
 		$html = <<<EOT
 		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$clientId}"
 				crossorigin="anonymous"></script>
@@ -152,6 +154,9 @@ class AetGoogleAdSense {
 	 * 배너 단위 광고의 HTML 생성
 	 */
 	private static function makeBannerHTML( $clientId, $unitId ){
+		if(! $clientId || ! $unitId ){
+			return '';
+		}
 		$html = <<<EOT
 		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$clientId}"
 				crossorigin="anonymous"></script>
@@ -218,7 +223,7 @@ EOT;
 	/**
 	 * 조건 체크
 	 */
-	public static function isAvailable($config, $isRegistered, $titleObj){
+	private static function isAvailable($config, $isRegistered, $titleObj){
 		
 		# 기존의 체크에서 false 가 되었던 것이 있다면, 바로 false 리턴.
 		if( !self::$_isAvailable ){
@@ -273,7 +278,7 @@ EOT;
 	/**
 	 * 설정을 로드함.
 	 */
-	public static function getConfiguration(){
+	private static function getConfiguration(){
 		# 한 번 로드했다면, 그 후에는 로드하지 않도록 처리.
 		if(self::$config){
 			if(isset(self::$config['client_id'])){
@@ -314,6 +319,21 @@ EOT;
 
 		self::$config = $config;
 		return $config;
+	}
+
+	/**
+	 * AdSense의 ID가 제대로된 입력값인지 확인.
+	 */
+	private static function isValidAdsId($config, $name){
+		if( !isset($config[$name]) ){
+			return false;
+		}
+		$keyId = $config[$name];
+
+		if( is_string($keyId) && strlen($keyId) > 5 ) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
