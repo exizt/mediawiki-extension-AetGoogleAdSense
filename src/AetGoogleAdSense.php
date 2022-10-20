@@ -1,8 +1,10 @@
 <?php
 /**
- * Hooks for Example extension.
+ * AetGoogleAdSense
  *
- * @file
+ * @link https://github.com/exizt/mw-ext-AetGoogleAdSense
+ * @author exizt
+ * @license GPL-2.0-or-later
  */
 
 class AetGoogleAdSense {
@@ -13,14 +15,19 @@ class AetGoogleAdSense {
 
 	/**
 	 * 'ArticleViewHeader' 후킹.
-	 * 
+	 *
 	 * 상단 (본문 바로 위 영역)에 광고를 노출하고 싶을 때 사용.
+	 * 
+	 * @param Article $article
+	 * @param bool|ParserOutput &$outputDone
+	 * @param bool &$pcache
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ArticleViewHeader
+	 * @see https://github.com/wikimedia/mediawiki/blob/master/includes/page/Hook/ArticleViewHeaderHook.php
 	 */
 	public static function onArticleViewHeader( &$article, &$outputDone, &$pcache ){
 		# 최소 유효성 체크
 		if( !self::isValid() ){
-			return false;
+			return;
 		}
 
 		# 설정값 조회
@@ -37,12 +44,16 @@ class AetGoogleAdSense {
 	 * 'SiteNoticeAfter'후킹.
 	 *
 	 * 상단(공지 영역)에 광고를 노출하고 싶을 때 사용.
+	 *
+	 * @param string &$siteNotice
+	 * @param Skin $skin
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/SiteNoticeAfter
+	 * @see https://github.com/wikimedia/mediawiki/blob/master/includes/skins/Hook/SiteNoticeAfterHook.php
 	 */
 	public static function onSiteNoticeAfter( &$siteNotice, $skin ){
 		# 최소 유효성 체크
 		if( !self::isValid() ){
-			return false;
+			return;
 		}
 
 		# 설정값 조회
@@ -55,11 +66,20 @@ class AetGoogleAdSense {
 		}
 	}
 
-
+	/**
+	 * 'ArticleViewFooter' 후킹.
+	 *
+	 * 본문 하단(분류 바로 위)에 광고를 노출하고 싶을 때 사용.
+	 *
+	 * @param Article $article
+	 * @param bool $patrolFooterShown
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ArticleViewFooter
+	 * @see https://github.com/wikimedia/mediawiki/blob/master/includes/page/Hook/ArticleViewFooterHook.php
+	 */
 	public static function onArticleViewFooter( $article, bool $patrolFooterShown ){
 		# 최소 유효성 체크
 		if( !self::isValid() ){
-			return false;
+			return;
 		}
 
 		# 설정값 조회
@@ -73,11 +93,14 @@ class AetGoogleAdSense {
 	}
 
 	/**
-	 * 컨텐츠 하단에 나타나는 애드센스 단위 광고.
+	 * 'SkinAfterContent'후킹.
 	 * 
-	 * 'SkinAfterContent'후킹 이용.
-	 * 
+	 * 본문 영역보다 좀 더 하위에 광고를 노출하고 싶을 때 사용.
+	 *
+	 * @param string &$data
+	 * @param Skin $skin
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/SkinAfterContent
+	 * @see https://github.com/wikimedia/mediawiki/blob/master/includes/skins/Hook/SkinAfterContentHook.php
 	 */
 	public static function onSkinAfterContent(&$data, $skin) {
 		# 최소 유효성 체크
