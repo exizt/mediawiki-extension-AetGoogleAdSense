@@ -26,7 +26,7 @@ class AetGoogleAdSense {
 		# 설정값 조회
 		$config = self::getConfiguration();
 		if( $config['article_view_header_hook'] ){
-			$result = self::makeTopBannerHTML( $article->getContext()->getUser()->isRegistered(), $article->getContext()->getTitle() );
+			$result = self::getTopAdsHTML( $config, $article->getContext() );
 			if($result){
 				$article->getContext()->getOutput()->addHTML($result);
 			}
@@ -48,7 +48,7 @@ class AetGoogleAdSense {
 		# 설정값 조회
 		$config = self::getConfiguration();
 		if($config['site_notice_after_hook'] ){
-			$result = self::makeTopBannerHTML( $skin->getUser()->isRegistered(), $skin->getTitle() );
+			$result = self::getTopAdsHTML( $config, $skin->getContext() );
 			if($result){
 				$siteNotice .= $result;
 			}
@@ -91,13 +91,13 @@ class AetGoogleAdSense {
 	}
 
 	/**
-	 * 상단 배너 광고
+	 * 컨텐츠 상단에 표시될 HTML (상단 유닛 광고)
 	 */
-	private static function makeTopBannerHTML( $isRegistered, $titleObject ) {
-		self::debugLog('::makeTopBannerHTML');
+	private static function getTopAdsHTML( $config, $context ) {
+		self::debugLog('::getTopAdsHTML');
 
 		// 설정 로드
-		$config = self::getConfiguration();
+		// $config = self::getConfiguration();
 		// self::debugLog($config);
 
 		# 해당되는 slot id가 지정되지 않았으면 보이지 않게 함
@@ -106,7 +106,7 @@ class AetGoogleAdSense {
 		}
 
 		// 유효성 체크
-		if( !self::isAvailable($config, $isRegistered, $titleObject ) ){
+		if( !self::isAvailable($config, $context->getUser()->isRegistered, $context->getTitle() ) ){
 			return false;
 		}
 
