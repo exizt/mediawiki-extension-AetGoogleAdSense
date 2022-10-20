@@ -215,13 +215,13 @@ EOT;
 
 		# 'client_id'가 지정되지 않았으면 보여지지 않도록 한다.
 		if( ! self::isOptionSet($config, 'client_id') ){
-			self::$_isAvailable = false;
+			self::setDisabled();
 			return false;
 		}
 
 		# 익명 사용자에게만 보여지게 하는 옵션이 있으면, 익명 사용자에게만 보여준다.
 		if ( $isRegistered && $config['anon_only'] ) {
-			self::$_isAvailable = false;
+			self::setDisabled();
 			return false;
 		}
 
@@ -229,6 +229,7 @@ EOT;
 		if ( ! empty($config['exclude_ip_list']) ){
 			$remoteAddr = $_SERVER["REMOTE_ADDR"] ?? '';
 			if( in_array($remoteAddr, $config['exclude_ip_list']) ){
+				self::setDisabled();
 				return false;
 			}
 		}
@@ -238,19 +239,19 @@ EOT;
 
 		// 메인 이름공간의 페이지에서만 나오도록 함. 특수문서 등에서 나타나지 않도록.
 		if( $titleObj->getNamespace() != NS_MAIN ){
-			self::$_isAvailable = false;
+			self::setDisabled();
 			return false;
 		}
 
 		# 대문 페이지에서도 안 나오게하기
 		if( $titleObj->isMainPage() ){
-			self::$_isAvailable = false;
+			self::setDisabled();
 			return false;
 		}
 
 		# 본문의 길이가 짧을 때에는 광고를 출력하지 않도록 설정.
 		if( $titleObj->getLength() <= $config['min_length'] ) {
-			self::$_isAvailable = false;
+			self::setDisabled();
 			return false;
 		}
 
@@ -281,10 +282,10 @@ EOT;
 		* exclude_ip_list : 애드센스를 보여주지 않을 IP 목록.
 		*/
 		$config = [
-			'enabled' => false,
 			'client_id' => '',
 			'unit_id_content_top' => '',
 			'unit_id_content_bottom' => '',
+			'auto_ads' => false,
 			'article_view_header_hook' => true,
 			'site_notice_after_hook' => false,
 			'anon_only' => false,
@@ -313,7 +314,7 @@ EOT;
 			return false;
 		}
 		if($config[$name] === '' || $config[$name] === 'none'
-		 || $config[$name] === false || $config[$name] === NULL){
+		 || $config[$name] === false || $config[$name] === null){
 			return false;
 		}
 		return true;
@@ -331,14 +332,8 @@ EOT;
 			return false;
 		}
 
-		// 디버깅 여부
-		if(is_array(self::$config)){
-			$isDebug = self::$config['Debug'];
-		} else {
-			$isDebug = $wgEzxGoogleAdsense['Debug'] ?? false;
-		}
-
 		// 로깅
+		$isDebug = $wgEzxGoogleAdsense['debug'] ?? false;
 		if($isDebug){
 			if(is_string($msg)){
 				wfDebugLog('AetGoogleAdSense', $msg);
@@ -347,8 +342,7 @@ EOT;
 			} else {
 				wfDebugLog('AetGoogleAdSense', json_encode($msg));
 			}
-		} else {
-			return false;
 		}
+		return false;
 	}
 }
