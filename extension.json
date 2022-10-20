@@ -13,6 +13,7 @@
         "AetGoogleAdSense": "src/AetGoogleAdSense.php"
     },
     "Hooks": {
+        "ArticleViewHeader": "AetGoogleAdSense::onArticleViewHeader",
         "SiteNoticeAfter": "AetGoogleAdSense::onSiteNoticeAfter",
         "SkinAfterContent": "AetGoogleAdSense::onSkinAfterContentGAdsCBottom"
     },

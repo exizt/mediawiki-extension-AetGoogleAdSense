@@ -12,14 +12,39 @@ class AetGoogleAdSense {
 	private static $_isAvailable = true;
 
 	/**
-	 * 컨텐츠 상단에 나타나는 애드센스 단위 광고.
+	 * 'ArticleViewHeader' 후킹.
 	 * 
-	 * 'SiteNoticeAfter'후킹 이용.
+	 * 상단 (본문 바로 위 영역)에 광고를 노출하고 싶을 때 사용.
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ArticleViewHeader
+	 */
+	public static function onArticleViewHeader( &$article, &$outputDone, &$pcache ){
+		# 최소 유효성 체크
+		if( !self::isValid() ){
+			return false;
+		}
+
+		# 설정값 조회
+		$config = self::getConfiguration();
+		if( $config['article_view_header_hook'] ){
+			// 
+			$result = self::makeTopBannerHTML( $article->getContext()->getUser()->isRegistered(), $article->getContext()->getTitle() );
+			if($result){
+				$article->getContext()->getOutput()->addHTML($result);
+			}
+		}
+	}
+
+	/**
+	 * 'SiteNoticeAfter'후킹.
 	 *
+	 * 상단(공지 영역)에 광고를 노출하고 싶을 때 사용.
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/SiteNoticeAfter
 	 */
 	public static function onSiteNoticeAfter(&$siteNotice, $skin) {
-		self::debugLog('::onSiteNoticeAfterGAdsCTop');
+		# 최소 유효성 체크
+		if( !self::isValid() ){
+			return false;
+		}
 
 		# 설정값 조회
 		$config = self::getConfiguration();
@@ -135,6 +160,50 @@ EOT;
 	}
 
 	/**
+	 * 최소 조건 체크.
+	 * 
+	 * 확장 기능이 동작할 수 있는지에 대한 최소 조건 체크. 성능상 부담이 없도록 구성.
+	 */
+	private static function isValid(){
+		global $wgEzxGoogleAdsense;
+
+		# 기존의 체크에서 false 가 되었던 것이 있다면, 바로 false 리턴.
+		if( !self::$_isAvailable ){
+			return false;
+		}
+
+		# 설정되어 있지 않음
+		if ( ! isset($wgEzxGoogleAdsense) ){
+			self::setDisabled();
+			return false;
+		}
+
+		# 코드 변경의 번거로움을 줄이기 위해서, 설정값 복사
+		$settings = $wgEzxGoogleAdsense;
+
+		# 'client_id'가 설정되어 있지 않음
+		if ( ! isset($settings['client_id']) ){
+			self::setDisabled();
+			return false;
+		}
+
+		# 'client_id'가 유효함
+		if ( is_string($settings['client_id']) && strlen($settings['client_id']) > 1){
+			return true;
+		}
+
+		self::setDisabled();
+		return false;
+	}
+
+	/**
+	 * '사용 안 함'을 설정.
+	 */
+	private static function setDisabled(){
+		self::$_isAvailable = false;
+	}
+
+	/**
 	 * 조건 체크
 	 */
 	public static function isAvailable($config, $isRegistered, $titleObj){
@@ -216,6 +285,8 @@ EOT;
 			'client_id' => '',
 			'unit_id_content_top' => '',
 			'unit_id_content_bottom' => '',
+			'article_view_header_hook' => true,
+			'site_notice_after_hook' => false,
 			'anon_only' => false,
 			'exclude_ip_list' => array(),
 			'min_length' => 500,
