@@ -70,23 +70,10 @@ class AetGoogleAdSense {
 
 		# 설정값 조회
 		$config = self::getConfiguration();
-
-		# 유효성 체크
-		if( !self::isAvailable($config, $skin->getUser()->isRegistered(), $skin->getTitle()) ){
-			return;
+		$result = self::getBottomAdsHTML( $config, $skin->getContext() );
+		if($result){
+			$data .= $result;
 		}
-
-		# bottom_id가 지정되어있는 경우에만 출력.
-		if( self::isOptionSet($config, 'unit_id_content_bottom') ){
-			$result = self::makeBottomBannerHTML( $skin->getUser()->isRegistered(), $skin->getTitle() );
-			if($result){
-				$data .= $result;
-			}
-		} else if( $config['auto_ads'] && !self::isOptionSet($config, 'unit_id_content_top') ){
-			# 자동 광고가 설정되어있고, top과 bottom 둘 다 사용되지 않을 때, 여기서 코드를 추가.
-			$data .= self::makeAutoAdsHTML( $config['client_id'] );
-		}
-
 		return true;
 	}
 
@@ -96,12 +83,8 @@ class AetGoogleAdSense {
 	private static function getTopAdsHTML( $config, $context ) {
 		self::debugLog('::getTopAdsHTML');
 
-		// 설정 로드
-		// $config = self::getConfiguration();
-		// self::debugLog($config);
-
 		# 해당되는 slot id가 지정되지 않았으면 보이지 않게 함
-		if( ! self::isOptionSet($config, 'unit_id_content_top') ){
+		if( ! self::isValidAdsId($config, 'unit_id_content_top') ){
 			return false;
 		}
 
@@ -114,9 +97,33 @@ class AetGoogleAdSense {
 	}
 
 	/**
-	 * 하단 배너 광고
+	 * 컨텐츠 하단에 표시될 HTML (하단 유닛 광고 or 자동 광고 스크립트)
 	 */
-	private static function makeBottomBannerHTML( $isRegistered, $titleObject ) {
+	private static function getBottomAdsHTML( $config, $context ){
+		self::debugLog('::getBottomAdsHTML');
+
+		# 유효성 체크
+		if( !self::isAvailable($config, $context->getUser()->isRegistered(), $context->getTitle()) ){
+			return false;
+		}
+
+		# bottom_id가 지정되어있는 경우에만 출력.
+		if( self::isOptionSet($config, 'unit_id_content_bottom') ){
+			$result = self::makeBottomBannerHTML( $config, $context );
+			if($result){
+				return $result;
+			}
+		} else if( $config['auto_ads'] && !self::isOptionSet($config, 'unit_id_content_top') ){
+			# 자동 광고가 설정되어있고, top과 bottom 둘 다 사용되지 않을 때, 여기서 코드를 추가.
+			return self::makeAutoAdsHTML( $config['client_id'] );
+		}
+		return false;
+	}
+
+	/**
+	 * 컨텐츠 하단에 표시될 HTML (하단 유닛 광고 or 자동 광고 스크립트)
+	 */
+	private static function makeBottomBannerHTML( $config, $context ){
 		self::debugLog('::makeBottomBannerHTML');
 
 		// 설정 로드
@@ -129,7 +136,7 @@ class AetGoogleAdSense {
 		}
 
 		// 유효성 체크
-		if( !self::isAvailable($config, $isRegistered, $titleObject ) ){
+		if( !self::isAvailable($config, $context->getUser()->isRegistered, $context->getTitle() ) ){
 			return false;
 		}
 
