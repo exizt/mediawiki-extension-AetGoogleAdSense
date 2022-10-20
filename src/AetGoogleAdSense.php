@@ -40,7 +40,7 @@ class AetGoogleAdSense {
 	 * 상단(공지 영역)에 광고를 노출하고 싶을 때 사용.
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/SiteNoticeAfter
 	 */
-	public static function onSiteNoticeAfter(&$siteNotice, $skin) {
+	public static function onSiteNoticeAfter( &$siteNotice, $skin ){
 		# 최소 유효성 체크
 		if( !self::isValid() ){
 			return false;
@@ -64,39 +64,28 @@ class AetGoogleAdSense {
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/SkinAfterContent
 	 */
 	public static function onSkinAfterContentGAdsCBottom(&$data, $skin) {
-		self::debugLog('::onSkinAfterContentGAdsCBottom');
+		# 최소 유효성 체크
+		if( !self::isValid() ){
+			return false;
+		}
 
-		// 설정 로드
+		# 설정값 조회
 		$config = self::getConfiguration();
-		// self::debugLog($config);
 
-		// 유효성 체크
+		# 유효성 체크
 		if( !self::isAvailable($config, $skin->getUser()->isRegistered(), $skin->getTitle()) ){
 			return;
 		}
 
-		# bottom_id가 지정되어있거나, top_id와 bottom_id 둘 다 없는 경우(자동광고만 사용)에 출력.
-		# 조건이 (b||!t&&!b)이므로, 줄이면 (b||!t)
-		if( self::isOptionSet($config, 'unit_id_content_bottom') || !self::isOptionSet($config, 'unit_id_content_top') ){
-			$data .= <<<EOT
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$config['client_id']}"
-		crossorigin="anonymous"></script>
-EOT;
-		}
-
 		# bottom_id가 지정되어있는 경우에만 출력.
 		if( self::isOptionSet($config, 'unit_id_content_bottom') ){
-			$data .= <<< EOT
-<ins class="adsbygoogle"
-		style="display:block"
-		data-ad-client="{$config['client_id']}"
-		data-ad-slot="{$config['unit_id_content_bottom']}"
-		data-ad-format="auto"
-		data-full-width-responsive="true"></ins>
-<script>
-		(adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-EOT;
+			$result = self::makeBottomBannerHTML( $skin->getUser()->isRegistered(), $skin->getTitle() );
+			if($result){
+				$data .= $result;
+			}
+		} else if( $config['auto_ads'] && !self::isOptionSet($config, 'unit_id_content_top') ){
+			# 자동 광고가 설정되어있고, top과 bottom 둘 다 사용되지 않을 때, 여기서 코드를 추가.
+			$data .= self::makeAutoAdsHTML( $config['client_id'] );
 		}
 
 		return true;
