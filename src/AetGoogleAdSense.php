@@ -18,41 +18,74 @@ class AetGoogleAdSense {
 	 *
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/SiteNoticeAfter
 	 */
-	public static function onSiteNoticeAfterGAdsCTop(&$siteNotice, $skin) {
+	public static function onSiteNoticeAfter(&$siteNotice, $skin) {
 		self::debugLog('::onSiteNoticeAfterGAdsCTop');
+
+		# 설정값 조회
+		$config = self::getConfiguration();
+		if($config['site_notice_after_hook'] ){
+			$result = self::makeTopBannerHTML( $skin->getUser()->isRegistered(), $skin->getTitle() );
+			if($result){
+				$siteNotice .= $result;
+			}
+		}
+	}
+
+	/**
+	 * 상단 배너 광고
+	 */
+	public static function makeTopBannerHTML( $isRegistered, $titleObject ) {
+		self::debugLog('::makeTopBannerHTML');
 
 		// 설정 로드
 		$config = self::getConfiguration();
 		// self::debugLog($config);
 
-		// 유효성 체크
-		if( !self::isAvailable($config, $skin->getUser()->isRegistered(), $skin->getTitle()) ){
-			return;
-		}
-
 		# 해당되는 slot id가 지정되지 않았으면 보이지 않게 함
 		if( ! self::isOptionSet($config, 'unit_id_content_top') ){
-			return;
+			return false;
 		}
 
-		// 
-		$siteNotice .= <<<EOT
-		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$config['client_id']}"
+		// 유효성 체크
+		if( !self::isAvailable($config, $isRegistered, $titleObject ) ){
+			return false;
+		}
+
+		return self::makeBannerHTML($config['client_id'], $config['unit_id_content_top']);
+	}
+
+	/**
+	 * 자동광고의 HTML 생성
+	 */
+	private static function makeAutoAdsHTML( $clientId ){
+		$html = <<<EOT
+		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$clientId}"
+				crossorigin="anonymous"></script>
+		EOT;
+		return $html;
+	}
+
+	/**
+	 * 배너 단위 광고의 HTML 생성
+	 */
+	private static function makeBannerHTML( $clientId, $unitId ){
+		$html = <<<EOT
+		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$clientId}"
 				crossorigin="anonymous"></script>
 		EOT;
 
-		$siteNotice .= <<< EOT
+		$html .= <<< EOT
 <ins class="adsbygoogle"
      style="display:block"
-     data-ad-client="{$config['client_id']}"
-     data-ad-slot="{$config['unit_id_content_top']}"
+     data-ad-client="{$clientId}"
+     data-ad-slot="{$unitId}"
      data-ad-format="auto"
      data-full-width-responsive="true"></ins>
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 EOT;
-        return true;
+		return $html;
 	}
 
 	/**

@@ -13,7 +13,7 @@
         "AetGoogleAdSense": "src/AetGoogleAdSense.php"
     },
     "Hooks": {
-        "SiteNoticeAfter": "AetGoogleAdSense::onSiteNoticeAfterGAdsCTop",
+        "SiteNoticeAfter": "AetGoogleAdSense::onSiteNoticeAfter",
         "SkinAfterContent": "AetGoogleAdSense::onSkinAfterContentGAdsCBottom"
     },
     "ResourceFileModulePaths": {
