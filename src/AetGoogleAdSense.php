@@ -55,6 +55,23 @@ class AetGoogleAdSense {
 		}
 	}
 
+
+	public static function onArticleViewFooter( $article, bool $patrolFooterShown ){
+		# 최소 유효성 체크
+		if( !self::isValid() ){
+			return false;
+		}
+
+		# 설정값 조회
+		$config = self::getConfiguration();
+		if( $config['hook_enabled']['ArticleViewFooter'] ){
+			$result = self::getBottomAdsHTML( $config, $article->getContext() );
+			if($result){
+				$article->getContext()->getOutput()->addHTML($result);
+			}
+		}
+	}
+
 	/**
 	 * 컨텐츠 하단에 나타나는 애드센스 단위 광고.
 	 * 

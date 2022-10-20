@@ -15,6 +15,7 @@
     "Hooks": {
         "ArticleViewHeader": "AetGoogleAdSense::onArticleViewHeader",
         "SiteNoticeAfter": "AetGoogleAdSense::onSiteNoticeAfter",
+        "ArticleViewFooter": "AetGoogleAdSense::onArticleViewFooter",
         "SkinAfterContent": "AetGoogleAdSense::onSkinAfterContent"
     },
     "ResourceFileModulePaths": {
