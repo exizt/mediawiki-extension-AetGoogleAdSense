@@ -57,63 +57,6 @@ class AetGoogleAdSense {
 	}
 
 	/**
-	 * 상단 배너 광고
-	 */
-	public static function makeTopBannerHTML( $isRegistered, $titleObject ) {
-		self::debugLog('::makeTopBannerHTML');
-
-		// 설정 로드
-		$config = self::getConfiguration();
-		// self::debugLog($config);
-
-		# 해당되는 slot id가 지정되지 않았으면 보이지 않게 함
-		if( ! self::isOptionSet($config, 'unit_id_content_top') ){
-			return false;
-		}
-
-		// 유효성 체크
-		if( !self::isAvailable($config, $isRegistered, $titleObject ) ){
-			return false;
-		}
-
-		return self::makeBannerHTML($config['client_id'], $config['unit_id_content_top']);
-	}
-
-	/**
-	 * 자동광고의 HTML 생성
-	 */
-	private static function makeAutoAdsHTML( $clientId ){
-		$html = <<<EOT
-		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$clientId}"
-				crossorigin="anonymous"></script>
-		EOT;
-		return $html;
-	}
-
-	/**
-	 * 배너 단위 광고의 HTML 생성
-	 */
-	private static function makeBannerHTML( $clientId, $unitId ){
-		$html = <<<EOT
-		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$clientId}"
-				crossorigin="anonymous"></script>
-		EOT;
-
-		$html .= <<< EOT
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="{$clientId}"
-     data-ad-slot="{$unitId}"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-EOT;
-		return $html;
-	}
-
-	/**
 	 * 컨텐츠 하단에 나타나는 애드센스 단위 광고.
 	 * 
 	 * 'SkinAfterContent'후킹 이용.
@@ -157,6 +100,86 @@ EOT;
 		}
 
 		return true;
+	}
+
+	/**
+	 * 상단 배너 광고
+	 */
+	public static function makeTopBannerHTML( $isRegistered, $titleObject ) {
+		self::debugLog('::makeTopBannerHTML');
+
+		// 설정 로드
+		$config = self::getConfiguration();
+		// self::debugLog($config);
+
+		# 해당되는 slot id가 지정되지 않았으면 보이지 않게 함
+		if( ! self::isOptionSet($config, 'unit_id_content_top') ){
+			return false;
+		}
+
+		// 유효성 체크
+		if( !self::isAvailable($config, $isRegistered, $titleObject ) ){
+			return false;
+		}
+
+		return self::makeBannerHTML($config['client_id'], $config['unit_id_content_top']);
+	}
+
+	/**
+	 * 하단 배너 광고
+	 */
+	public static function makeBottomBannerHTML( $isRegistered, $titleObject ) {
+		self::debugLog('::makeBottomBannerHTML');
+
+		// 설정 로드
+		$config = self::getConfiguration();
+		// self::debugLog($config);
+
+		# 해당되는 slot id가 지정되지 않았으면 보이지 않게 함
+		if( ! self::isOptionSet($config, 'unit_id_content_bottom') ){
+			return false;
+		}
+
+		// 유효성 체크
+		if( !self::isAvailable($config, $isRegistered, $titleObject ) ){
+			return false;
+		}
+
+		return self::makeBannerHTML($config['client_id'], $config['unit_id_content_bottom']);
+	}
+
+	/**
+	 * 자동광고의 HTML 생성
+	 */
+	private static function makeAutoAdsHTML( $clientId ){
+		$html = <<<EOT
+		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$clientId}"
+				crossorigin="anonymous"></script>
+		EOT;
+		return $html;
+	}
+
+	/**
+	 * 배너 단위 광고의 HTML 생성
+	 */
+	private static function makeBannerHTML( $clientId, $unitId ){
+		$html = <<<EOT
+		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$clientId}"
+				crossorigin="anonymous"></script>
+		EOT;
+
+		$html .= <<< EOT
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="{$clientId}"
+     data-ad-slot="{$unitId}"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+EOT;
+		return $html;
 	}
 
 	/**
