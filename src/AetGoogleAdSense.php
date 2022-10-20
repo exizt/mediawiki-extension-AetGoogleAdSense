@@ -89,7 +89,7 @@ class AetGoogleAdSense {
 		}
 
 		// 유효성 체크
-		if( !self::isAvailable($config, $context->getUser()->isRegistered, $context->getTitle() ) ){
+		if( !self::isAvailable($config, $context) ){
 			return false;
 		}
 
@@ -103,13 +103,13 @@ class AetGoogleAdSense {
 		self::debugLog('::getBottomAdsHTML');
 
 		# 유효성 체크
-		if( !self::isAvailable($config, $context->getUser()->isRegistered(), $context->getTitle()) ){
+		if( !self::isAvailable($config, $context) ){
 			return false;
 		}
 
 		# bottom_id가 지정되어있는 경우에만 출력.
 		if( self::isOptionSet($config, 'unit_id_content_bottom') ){
-			$result = self::makeBottomBannerHTML( $config, $context );
+			$result = self::makeBannerHTML($config['client_id'], $config['unit_id_content_bottom']);
 			if($result){
 				return $result;
 			}
@@ -118,29 +118,6 @@ class AetGoogleAdSense {
 			return self::makeAutoAdsHTML( $config['client_id'] );
 		}
 		return false;
-	}
-
-	/**
-	 * 컨텐츠 하단에 표시될 HTML (하단 유닛 광고 or 자동 광고 스크립트)
-	 */
-	private static function makeBottomBannerHTML( $config, $context ){
-		self::debugLog('::makeBottomBannerHTML');
-
-		// 설정 로드
-		$config = self::getConfiguration();
-		// self::debugLog($config);
-
-		# 해당되는 slot id가 지정되지 않았으면 보이지 않게 함
-		if( ! self::isOptionSet($config, 'unit_id_content_bottom') ){
-			return false;
-		}
-
-		// 유효성 체크
-		if( !self::isAvailable($config, $context->getUser()->isRegistered, $context->getTitle() ) ){
-			return false;
-		}
-
-		return self::makeBannerHTML($config['client_id'], $config['unit_id_content_bottom']);
 	}
 
 	/**
@@ -230,7 +207,7 @@ EOT;
 	/**
 	 * 조건 체크
 	 */
-	private static function isAvailable($config, $isRegistered, $titleObj){
+	private static function isAvailable($config, $context){
 		
 		# 기존의 체크에서 false 가 되었던 것이 있다면, 바로 false 리턴.
 		if( !self::$_isAvailable ){
@@ -244,7 +221,7 @@ EOT;
 		}
 
 		# 익명 사용자에게만 보여지게 하는 옵션이 있으면, 익명 사용자에게만 보여준다.
-		if ( $isRegistered && $config['anon_only'] ) {
+		if ( $context->getUser()->isRegistered() && $config['anon_only'] ) {
 			self::setDisabled();
 			return false;
 		}
@@ -260,6 +237,8 @@ EOT;
 
 		# self::debugLog("isAvailable");
 		# self::debugLog($ns);
+
+		$titleObj = $context->getTitle();
 
 		// 메인 이름공간의 페이지에서만 나오도록 함. 특수문서 등에서 나타나지 않도록.
 		if( $titleObj->getNamespace() != NS_MAIN ){
