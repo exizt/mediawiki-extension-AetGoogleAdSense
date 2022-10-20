@@ -102,18 +102,23 @@ class AetGoogleAdSense {
 	private static function getBottomAdsHTML( $config, $context ){
 		self::debugLog('::getBottomAdsHTML');
 
+		# auto_ads가 설정되어있거나, bottom id가 지정되어있는 것이 아닐 때에는 보이지 않게 함.
+		if( !$config['auto_ads'] && !self::isValidAdsId($config, 'unit_id_content_bottom') ){
+			return false;
+		}
+
 		# 유효성 체크
 		if( !self::isAvailable($config, $context) ){
 			return false;
 		}
 
 		# bottom_id가 지정되어있는 경우에만 출력.
-		if( self::isOptionSet($config, 'unit_id_content_bottom') ){
+		if( self::isValidAdsId($config, 'unit_id_content_bottom') ){
 			$result = self::makeBannerHTML($config['client_id'], $config['unit_id_content_bottom']);
 			if($result){
 				return $result;
 			}
-		} else if( $config['auto_ads'] && !self::isOptionSet($config, 'unit_id_content_top') ){
+		} else if( $config['auto_ads'] && !self::isValidAdsId($config, 'unit_id_content_top') ){
 			# 자동 광고가 설정되어있고, top과 bottom 둘 다 사용되지 않을 때, 여기서 코드를 추가.
 			return self::makeAutoAdsHTML( $config['client_id'] );
 		}
@@ -215,7 +220,7 @@ EOT;
 		}
 
 		# 'client_id'가 지정되지 않았으면 보여지지 않도록 한다.
-		if( ! self::isOptionSet($config, 'client_id') ){
+		if( ! self::isValidAdsId($config, 'client_id') ){
 			self::setDisabled();
 			return false;
 		}
@@ -320,22 +325,6 @@ EOT;
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * 옵션이 지정되어있는지 여부
-	 * 
-	 * @return boolean false (지정되지 않았음) /true(지정되어 있음)
-	 */
-	private static function isOptionSet($config, $name){
-		if( !isset($config[$name]) ){
-			return false;
-		}
-		if($config[$name] === '' || $config[$name] === 'none'
-		 || $config[$name] === false || $config[$name] === null){
-			return false;
-		}
-		return true;
 	}
 
 	/**
