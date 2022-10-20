@@ -15,7 +15,7 @@
     "Hooks": {
         "ArticleViewHeader": "AetGoogleAdSense::onArticleViewHeader",
         "SiteNoticeAfter": "AetGoogleAdSense::onSiteNoticeAfter",
-        "SkinAfterContent": "AetGoogleAdSense::onSkinAfterContentGAdsCBottom"
+        "SkinAfterContent": "AetGoogleAdSense::onSkinAfterContent"
     },
     "ResourceFileModulePaths": {
         "localBasePath": "resources",

@@ -63,7 +63,7 @@ class AetGoogleAdSense {
 	 * 
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/SkinAfterContent
 	 */
-	public static function onSkinAfterContentGAdsCBottom(&$data, $skin) {
+	public static function onSkinAfterContent(&$data, $skin) {
 		# 최소 유효성 체크
 		if( !self::isValid() ){
 			return false;
