@@ -25,7 +25,7 @@ class AetGoogleAdSense {
 
 		# 설정값 조회
 		$config = self::getConfiguration();
-		if( $config['article_view_header_hook'] ){
+		if( $config['hook_enabled']['ArticleViewHeader'] ){
 			$result = self::getTopAdsHTML( $config, $article->getContext() );
 			if($result){
 				$article->getContext()->getOutput()->addHTML($result);
@@ -47,7 +47,7 @@ class AetGoogleAdSense {
 
 		# 설정값 조회
 		$config = self::getConfiguration();
-		if($config['site_notice_after_hook'] ){
+		if( $config['hook_enabled']['SiteNoticeAfter'] ){
 			$result = self::getTopAdsHTML( $config, $skin->getContext() );
 			if($result){
 				$siteNotice .= $result;
@@ -87,9 +87,11 @@ class AetGoogleAdSense {
 
 		# 설정값 조회
 		$config = self::getConfiguration();
-		$result = self::getBottomAdsHTML( $config, $skin->getContext() );
-		if($result){
-			$data .= $result;
+		if( $config['hook_enabled']['SkinAfterContent'] ){
+			$result = self::getBottomAdsHTML( $config, $skin->getContext() );
+			if($result){
+				$data .= $result;
+			}
 		}
 		return true;
 	}
@@ -295,7 +297,7 @@ EOT;
 		}
 		self::debugLog('::getConfiguration');
 
-		global $wgEzxGoogleAdsense;
+		global $wgEzxGoogleAdsense, $wgEzxGoogleAdsenseHooks;
 
 		/*
 		* 설정 기본값
@@ -311,20 +313,46 @@ EOT;
 			'unit_id_content_top' => '',
 			'unit_id_content_bottom' => '',
 			'auto_ads' => false,
-			'article_view_header_hook' => true,
-			'site_notice_after_hook' => false,
 			'anon_only' => false,
 			'exclude_ip_list' => array(),
 			'min_length' => 500,
 			'debug' => false
 		];
+
+		$configHookEnabled = [
+			'ArticleViewHeader' => true,
+			'SiteNoticeAfter' => false,
+			'ArticleViewFooter' => true,
+			'SkinAfterContent' => false,
+		];
 		
 		# 설정값 병합
 		if (isset($wgEzxGoogleAdsense)){
-			self::debugLog('isset $wgEzxGoogleAdsense');
-			$config = array_merge($config, $wgEzxGoogleAdsense);
+			// self::debugLog('isset $wgEzxGoogleAdsense');
+			// $config = array_merge($config, $wgEzxGoogleAdsense);
+			$custom = $wgEzxGoogleAdsense;
+			foreach ($custom as $key => $value) {
+				if( array_key_exists($key, $config) ) {
+					if( gettype($config[$key]) && gettype($custom[$key]) ){
+						$config[$key] = $custom[$key];
+					}
+				}
+			}
 		}
 
+		# 훅 설정 병합
+		if (isset($wgEzxGoogleAdsenseHooks)){
+			$custom = $wgEzxGoogleAdsenseHooks;
+			foreach ($custom as $key => $value) {
+				if( array_key_exists($key, $config) ) {
+					if( gettype($config[$key]) && gettype($custom[$key]) ){
+						$config[$key] = $custom[$key];
+					}
+				}
+			}
+		}
+
+		$config['hook_enabled'] = $configHookEnabled;
 		self::$config = $config;
 		return $config;
 	}
