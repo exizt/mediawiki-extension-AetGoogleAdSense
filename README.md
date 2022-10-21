@@ -10,15 +10,15 @@ AetGoogleAdSense (Mediawiki Google AdSense Extension)
 
 ## 옵션
 - `$wgAetGoogleAdsense['client_id']`
-    - 애드센스 id key 값. (예: ca-pub-xxxxxxxxx)
+    - 애드센스 id key 값. (eg: `'ca-pub-xxx...'`)
         - Type : `string`
         - Default : `''`
 - `$wgAetGoogleAdsense['unit_id_content_top']`
-    - 콘텐츠 상단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
+    - 콘텐츠 상단에 표시할 애드센스 광고 단위 아이디 (eg: `xxx...`)
         - Type : `string`
         - Default : `''`
 - `$wgAetGoogleAdsense['unit_id_content_bottom']`
-    - 콘텐츠 히단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
+    - 콘텐츠 히단에 표시할 애드센스 광고 단위 아이디 (eg: `xxx...`)
         - Type : `string`
         - Default : `''`
 - `$wgAetGoogleAdsense['anon_only']`
@@ -30,7 +30,7 @@ AetGoogleAdSense (Mediawiki Google AdSense Extension)
         - Type : `array`
         - Default : `[]`
 - `$wgAetGoogleAdsense['min_length']`
-    - 애드센스가 보여질 최소 문서의 본문 길이. (기본값: `500`)
+    - 애드센스가 보여질 최소 문서의 본문 길이.
         - Type : `int`
         - Default : `500`
 
