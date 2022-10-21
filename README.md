@@ -11,28 +11,28 @@ AetGoogleAdSense (Mediawiki Google AdSense Extension)
 ## 옵션
 - `$wgAetGoogleAdsense['client_id']`
     - 애드센스 id key 값. (eg: `'ca-pub-xxx...'`)
-        - Type : `string`
-        - Default : `''`
+        - type : `string`
+        - default : `''`
 - `$wgAetGoogleAdsense['unit_id_content_top']`
     - 콘텐츠 상단에 표시할 애드센스 광고 단위 아이디 (eg: `xxx...`)
-        - Type : `string`
-        - Default : `''`
+        - type : `string`
+        - default : `''`
 - `$wgAetGoogleAdsense['unit_id_content_bottom']`
     - 콘텐츠 히단에 표시할 애드센스 광고 단위 아이디 (eg: `xxx...`)
-        - Type : `string`
-        - Default : `''`
+        - type : `string`
+        - default : `''`
 - `$wgAetGoogleAdsense['anon_only']`
     - '비회원'만 애드센스 노출하기.
-        - Type : `bool`
-        - Default : `false`
+        - type : `bool`
+        - default : `false`
 - `$wgAetGoogleAdsense['exclude_ip_list']`
     - 애드센스를 보여주지 않을 IP 목록.
-        - Type : `array`
-        - Default : `[]`
+        - type : `array`
+        - default : `[]`
 - `$wgAetGoogleAdsense['min_length']`
     - 애드센스가 보여질 최소 문서의 본문 길이.
-        - Type : `int`
-        - Default : `500`
+        - type : `int`
+        - default : `500`
 
 참고
 1. `client_id`가 입력되고, `unit_id_content_top`과 `unit_id_content_bottom`이 입력 안 된 경우는 => 자동 광고만 허가.
