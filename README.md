@@ -20,6 +20,7 @@ wfLoadExtension( 'AetGoogleAdSense' );
 
 
 ## Configuration
+`$wgAetGoogleAdsense`
 - `$wgAetGoogleAdsense['client_id']`
     - Google AdSense Client Id. (eg: `'ca-pub-xxx...'`)
         - `required`
@@ -45,6 +46,23 @@ wfLoadExtension( 'AetGoogleAdSense' );
     - 애드센스가 보여질 최소 문서의 본문 길이.
         - type : `int`
         - default : `500`
+
+
+`$wgAetGoogleAdsenseHooks`
+- `$wgAetGoogleAdsenseHooks['ArticleViewHeader']`
+    - type : `bool`
+    - default : `true`
+- `$wgAetGoogleAdsenseHooks['SiteNoticeAfter']`
+    - type : `bool`
+    - default : `false`
+- `$wgAetGoogleAdsenseHooks['ArticleViewFooter']`
+    - type : `bool`
+    - default : `true`
+- `$wgAetGoogleAdsenseHooks['SkinAfterContent']`
+    - type : `bool`
+    - default : `false`
+
+
 
 참고
 1. `client_id`가 입력되고, `unit_id_content_top`과 `unit_id_content_bottom`이 입력 안 된 경우는 => 자동 광고만 허가.
