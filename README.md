@@ -20,7 +20,7 @@ wfLoadExtension( 'AetGoogleAdSense' );
 
 
 ## Configuration
-`$wgAetGoogleAdsense`
+주요 설정
 - `$wgAetGoogleAdsense['client_id']`
     - Google AdSense Client Id. (eg: `'ca-pub-xxx...'`)
         - `required`
@@ -48,7 +48,8 @@ wfLoadExtension( 'AetGoogleAdSense' );
         - default : `500`
 
 
-`$wgAetGoogleAdsenseHooks`
+
+사용할 훅 설정
 - `$wgAetGoogleAdsenseHooks['ArticleViewHeader']`
     - type : `bool`
     - default : `true`
