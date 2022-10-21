@@ -208,6 +208,21 @@ EOT;
 	}
 
 	/**
+	 * AdSense의 ID가 제대로된 입력값인지 확인.
+	 */
+	private static function isValidAdsId($config, $name){
+		if( !isset($config[$name]) ){
+			return false;
+		}
+		$keyId = $config[$name];
+
+		if( is_string($keyId) && strlen($keyId) > 5 ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * 최소 조건 체크.
 	 * 
 	 * 확장 기능이 동작할 수 있는지에 대한 최소 조건 체크. 성능상 부담이 없도록 구성.
@@ -378,21 +393,6 @@ EOT;
 		$config['hook_enabled'] = $configHookEnabled;
 		self::$config = $config;
 		return $config;
-	}
-
-	/**
-	 * AdSense의 ID가 제대로된 입력값인지 확인.
-	 */
-	private static function isValidAdsId($config, $name){
-		if( !isset($config[$name]) ){
-			return false;
-		}
-		$keyId = $config[$name];
-
-		if( is_string($keyId) && strlen($keyId) > 5 ) {
-			return true;
-		}
-		return false;
 	}
 
 	/**

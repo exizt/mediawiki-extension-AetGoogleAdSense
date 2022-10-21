@@ -1,7 +1,7 @@
 # AetGoogleAdSense
 
-AetGoogleAdSense (Mediawiki Google Adsense Extension)
-* 미디어위키에 구글 애드센스를 삽입하고, 몇 가지 도움이 될 수 있는 설정을 할 수 있는 확장 기능입니다. 
+AetGoogleAdSense (Mediawiki Google AdSense Extension)
+* 미디어위키에 '구글 애드센스(Google AdSense)'를 적용하고, 몇 가지 설정을 할 수 있는 확장 기능.
 * Git : https://github.com/exizt/mw-ext-googleadsense
 
 
