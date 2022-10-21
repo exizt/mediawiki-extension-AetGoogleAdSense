@@ -210,7 +210,7 @@ EOT;
 	/**
 	 * AdSense의 ID가 제대로된 입력값인지 확인.
 	 */
-	private static function isValidAdsId($config, $name){
+	private static function isValidAdsId( $config, $name ){
 		if( !isset($config[$name]) ){
 			return false;
 		}
@@ -251,7 +251,7 @@ EOT;
 		}
 
 		# 'client_id'가 유효함
-		if ( is_string($settings['client_id']) && strlen($settings['client_id']) > 1){
+		if ( self::isValidAdsId($settings, 'client_id') ){
 			return true;
 		}
 
@@ -269,16 +269,10 @@ EOT;
 	/**
 	 * 조건 체크
 	 */
-	private static function isAvailable($config, $context){
+	private static function isAvailable( $config, $context ){
 		
 		# 기존의 체크에서 false 가 되었던 것이 있다면, 바로 false 리턴.
 		if( !self::$_isAvailable ){
-			return false;
-		}
-
-		# 'client_id'가 지정되지 않았으면 보여지지 않도록 한다.
-		if( ! self::isValidAdsId($config, 'client_id') ){
-			self::setDisabled();
 			return false;
 		}
 
@@ -366,13 +360,10 @@ EOT;
 		
 		# 설정값 병합
 		if (isset($wgAetGoogleAdsense)){
-			// self::debugLog('isset $wgAetGoogleAdsense');
-			// $config = array_merge($config, $wgAetGoogleAdsense);
-			$custom = $wgAetGoogleAdsense;
-			foreach ($custom as $key => $value) {
+			foreach ($wgAetGoogleAdsense as $key => $value) {
 				if( array_key_exists($key, $config) ) {
-					if( gettype($config[$key]) == gettype($custom[$key]) ){
-						$config[$key] = $custom[$key];
+					if( gettype($config[$key]) == gettype($value) ){
+						$config[$key] = $value;
 					}
 				}
 			}
@@ -380,11 +371,10 @@ EOT;
 
 		# 훅 설정 병합
 		if (isset($wgAetGoogleAdsenseHooks)){
-			$custom = $wgAetGoogleAdsenseHooks;
-			foreach ($custom as $key => $value) {
+			foreach ($wgAetGoogleAdsenseHooks as $key => $value) {
 				if( array_key_exists($key, $configHookEnabled) ) {
-					if( gettype($configHookEnabled[$key]) == gettype($custom[$key]) ){
-						$configHookEnabled[$key] = $custom[$key];
+					if( gettype($configHookEnabled[$key]) == gettype($value) ){
+						$configHookEnabled[$key] = $value;
 					}
 				}
 			}
