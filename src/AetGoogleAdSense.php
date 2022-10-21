@@ -126,7 +126,7 @@ class AetGoogleAdSense {
 		self::debugLog('::getTopAdsHTML');
 
 		# 해당되는 slot id가 지정되지 않았으면 보이지 않게 함
-		if( ! self::isValidAdsId($config, 'unit_id_content_top') ){
+		if( ! self::isValidAdsId( $config['unit_id_content_top'] ) ){
 			return false;
 		}
 
@@ -144,8 +144,8 @@ class AetGoogleAdSense {
 	private static function getBottomAdsHTML( $config, $context ){
 		self::debugLog('::getBottomAdsHTML');
 
-		# auto_ads가 설정되어있거나, bottom id가 지정되어있는 것이 아닐 때에는 보이지 않게 함.
-		if( !$config['auto_ads'] && !self::isValidAdsId($config, 'unit_id_content_bottom') ){
+		# auto_ads가 false이면서, bottom_id도 제대로 지정되지 않을 경우에는 보이지 않게 함.
+		if( !$config['auto_ads'] && !self::isValidAdsId( $config['unit_id_content_bottom'] ) ){
 			return false;
 		}
 
@@ -155,12 +155,12 @@ class AetGoogleAdSense {
 		}
 
 		# bottom_id가 지정되어있는 경우에만 출력.
-		if( self::isValidAdsId($config, 'unit_id_content_bottom') ){
+		if( self::isValidAdsId( $config['unit_id_content_bottom'] ) ){
 			$result = self::makeBannerHTML($config['client_id'], $config['unit_id_content_bottom']);
 			if($result){
 				return $result;
 			}
-		} else if( $config['auto_ads'] && !self::isValidAdsId($config, 'unit_id_content_top') ){
+		} else if( $config['auto_ads'] && !self::isValidAdsId( $config['unit_id_content_top'] ) ){
 			# 자동 광고가 설정되어있고, top과 bottom 둘 다 사용되지 않을 때, 여기서 코드를 추가.
 			return self::makeAutoAdsHTML( $config['client_id'] );
 		}
@@ -210,16 +210,11 @@ EOT;
 	/**
 	 * AdSense의 ID가 제대로된 입력값인지 확인.
 	 */
-	private static function isValidAdsId( $config, $name ){
-		if( !isset($config[$name]) ){
+	private static function isValidAdsId( $id ){
+		if( ! is_string($id) || strlen($id) < 5 ) {
 			return false;
 		}
-		$keyId = $config[$name];
-
-		if( is_string($keyId) && strlen($keyId) > 5 ) {
-			return true;
-		}
-		return false;
+		return true;
 	}
 
 	/**
@@ -241,17 +236,9 @@ EOT;
 			return false;
 		}
 
-		# 코드 변경의 번거로움을 줄이기 위해서, 설정값 복사
-		$settings = $wgAetGoogleAdsense;
-
-		# 'client_id'가 설정되어 있지 않음
-		if ( ! isset($settings['client_id']) ){
-			self::setDisabled();
-			return false;
-		}
-
 		# 'client_id'가 유효함
-		if ( self::isValidAdsId($settings, 'client_id') ){
+		$clientId = $wgAetGoogleAdsense['client_id'] ?? '';
+		if ( self::isValidAdsId($clientId) ){
 			return true;
 		}
 
