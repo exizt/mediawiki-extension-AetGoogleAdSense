@@ -213,7 +213,7 @@ EOT;
 	 * 확장 기능이 동작할 수 있는지에 대한 최소 조건 체크. 성능상 부담이 없도록 구성.
 	 */
 	private static function isValid(){
-		global $wgEzxGoogleAdsense;
+		global $wgAetGoogleAdsense;
 
 		# 기존의 체크에서 false 가 되었던 것이 있다면, 바로 false 리턴.
 		if( !self::$_isAvailable ){
@@ -221,13 +221,13 @@ EOT;
 		}
 
 		# 설정되어 있지 않음
-		if ( ! isset($wgEzxGoogleAdsense) ){
+		if ( ! isset($wgAetGoogleAdsense) ){
 			self::setDisabled();
 			return false;
 		}
 
 		# 코드 변경의 번거로움을 줄이기 위해서, 설정값 복사
-		$settings = $wgEzxGoogleAdsense;
+		$settings = $wgAetGoogleAdsense;
 
 		# 'client_id'가 설정되어 있지 않음
 		if ( ! isset($settings['client_id']) ){
@@ -320,7 +320,7 @@ EOT;
 		}
 		self::debugLog('::getConfiguration');
 
-		global $wgEzxGoogleAdsense, $wgEzxGoogleAdsenseHooks;
+		global $wgAetGoogleAdsense, $wgAetGoogleAdsenseHooks;
 
 		/*
 		* 설정 기본값
@@ -350,13 +350,13 @@ EOT;
 		];
 		
 		# 설정값 병합
-		if (isset($wgEzxGoogleAdsense)){
-			// self::debugLog('isset $wgEzxGoogleAdsense');
-			// $config = array_merge($config, $wgEzxGoogleAdsense);
-			$custom = $wgEzxGoogleAdsense;
+		if (isset($wgAetGoogleAdsense)){
+			// self::debugLog('isset $wgAetGoogleAdsense');
+			// $config = array_merge($config, $wgAetGoogleAdsense);
+			$custom = $wgAetGoogleAdsense;
 			foreach ($custom as $key => $value) {
 				if( array_key_exists($key, $config) ) {
-					if( gettype($config[$key]) && gettype($custom[$key]) ){
+					if( gettype($config[$key]) == gettype($custom[$key]) ){
 						$config[$key] = $custom[$key];
 					}
 				}
@@ -364,12 +364,12 @@ EOT;
 		}
 
 		# 훅 설정 병합
-		if (isset($wgEzxGoogleAdsenseHooks)){
-			$custom = $wgEzxGoogleAdsenseHooks;
+		if (isset($wgAetGoogleAdsenseHooks)){
+			$custom = $wgAetGoogleAdsenseHooks;
 			foreach ($custom as $key => $value) {
-				if( array_key_exists($key, $config) ) {
-					if( gettype($config[$key]) && gettype($custom[$key]) ){
-						$config[$key] = $custom[$key];
+				if( array_key_exists($key, $configHookEnabled) ) {
+					if( gettype($configHookEnabled[$key]) == gettype($custom[$key]) ){
+						$configHookEnabled[$key] = $custom[$key];
 					}
 				}
 			}
@@ -399,7 +399,7 @@ EOT;
 	 * 로깅 관련
 	 */
 	private static function debugLog($msg){
-		global $wgDebugToolbar, $wgEzxGoogleAdsense;
+		global $wgDebugToolbar, $wgAetGoogleAdsense;
 
 		# 디버그툴바 사용중일 때만 허용.
 		$useDebugToolbar = $wgDebugToolbar ?? false;
@@ -408,7 +408,7 @@ EOT;
 		}
 
 		// 로깅
-		$isDebug = $wgEzxGoogleAdsense['debug'] ?? false;
+		$isDebug = $wgAetGoogleAdsense['debug'] ?? false;
 		if($isDebug){
 			if(is_string($msg)){
 				wfDebugLog('AetGoogleAdSense', $msg);

@@ -18,11 +18,5 @@
         "ArticleViewFooter": "AetGoogleAdSense::onArticleViewFooter",
         "SkinAfterContent": "AetGoogleAdSense::onSkinAfterContent"
     },
-    "ResourceFileModulePaths": {
-        "localBasePath": "resources",
-        "remoteExtPath": "AetGoogleAdSense/resources"
-    },
-    "ResourceModules": {
-    },
     "manifest_version": 2
 }
