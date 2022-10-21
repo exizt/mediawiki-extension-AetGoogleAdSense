@@ -1,16 +1,28 @@
 # AetGoogleAdSense
+The AetGoogleAdSense extension lets you display Google AdSense in wiki pages and you can set up some settings.
 
-AetGoogleAdSense (Mediawiki Google AdSense Extension)
-* 미디어위키에 '구글 애드센스(Google AdSense)'를 적용하고, 몇 가지 설정을 할 수 있는 확장 기능.
+Links
 * Git : https://github.com/exizt/mw-ext-googleadsense
 
 
 
-# 설정
+## Requirements
+* PHP 7.4.3 or later (tested up to 7.4.30)
+* MediaWiki 1.35 or later (tested up to 1.35)
 
-## 옵션
+
+## Installation
+1. Download and place the files in a directory called `AetGoogleAdSense` in your `extensions/` folder.
+2. Add the following code at the bottom of your `LocalSettings.php`:
+```
+wfLoadExtension( 'AetGoogleAdSense' );
+```
+
+
+## Configuration
 - `$wgAetGoogleAdsense['client_id']`
-    - 애드센스 id key 값. (eg: `'ca-pub-xxx...'`)
+    - Google AdSense Client Id. (eg: `'ca-pub-xxx...'`)
+        - `required`
         - type : `string`
         - default : `''`
 - `$wgAetGoogleAdsense['unit_id_content_top']`
