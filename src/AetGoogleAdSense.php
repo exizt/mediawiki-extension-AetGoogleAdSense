@@ -168,7 +168,7 @@ class AetGoogleAdSense {
 	}
 
 	/**
-	 * 자동광고의 HTML 생성
+	 * '자동 광고'의 HTML 생성
 	 */
 	private static function makeAutoAdsHTML( $clientId ){
 		if(! $clientId ){
@@ -182,7 +182,7 @@ class AetGoogleAdSense {
 	}
 
 	/**
-	 * 배너 단위 광고의 HTML 생성
+	 * '배너 단위 광고'의 HTML 생성
 	 */
 	private static function makeBannerHTML( $clientId, $unitId ){
 		if(! $clientId || ! $unitId ){
