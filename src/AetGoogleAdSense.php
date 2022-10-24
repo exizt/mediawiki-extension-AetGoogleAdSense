@@ -223,21 +223,22 @@ EOT;
 	 * 확장 기능이 동작할 수 있는지에 대한 최소 조건 체크. 성능상 부담이 없도록 구성.
 	 */
 	private static function isValid(){
-		global $wgAetGoogleAdsense;
-
 		# 기존의 체크에서 false 가 되었던 것이 있다면, 바로 false 리턴.
 		if( !self::$_isAvailable ){
 			return false;
 		}
 
+		# global $wgAetGoogleAdsense;
+		$userSettings = self::getUserLocalSettings();
+
 		# 설정되어 있지 않음
-		if ( ! isset($wgAetGoogleAdsense) ){
+		if ( ! isset($userSettings) ){
 			self::setDisabled();
 			return false;
 		}
 
 		# 'client_id'가 유효함
-		$clientId = $wgAetGoogleAdsense['client_id'] ?? '';
+		$clientId = $userSettings['client_id'] ?? '';
 		if ( self::isValidAdsId($clientId) ){
 			return true;
 		}
@@ -373,28 +374,38 @@ EOT;
 	}
 
 	/**
-	 * 로깅 관련
+	 * 설정값 조회
+	 */
+	private static function getUserLocalSettings(){
+		global $wgAetGoogleAdsense;
+		return $wgAetGoogleAdsense;
+	}
+
+	/**
+	 * 디버그 로깅 관련
 	 */
 	private static function debugLog($msg){
-		global $wgDebugToolbar, $wgAetGoogleAdsense;
+		global $wgDebugToolbar;
 
 		# 디버그툴바 사용중일 때만 허용.
 		$useDebugToolbar = $wgDebugToolbar ?? false;
 		if( !$useDebugToolbar ){
 			return false;
 		}
-
-		// 로깅
-		$isDebug = $wgAetGoogleAdsense['debug'] ?? false;
+		
+		# 로깅
+		$userSettings = self::getUserLocalSettings();
+		$isDebug = $userSettings['debug'] ?? false;
 		if($isDebug){
 			if(is_string($msg)){
-				wfDebugLog('AetGoogleAdSense', $msg);
+				wfDebugLog(static::class, $msg);
 			} else if(is_object($msg) || is_array($msg)){
-				wfDebugLog('AetGoogleAdSense', json_encode($msg));
+				wfDebugLog(static::class, json_encode($msg));
 			} else {
-				wfDebugLog('AetGoogleAdSense', json_encode($msg));
+				wfDebugLog(static::class, json_encode($msg));
 			}
+		} else {
+			return false;
 		}
-		return false;
 	}
 }
