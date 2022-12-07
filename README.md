@@ -5,7 +5,6 @@ Links
 * Git : https://github.com/exizt/mw-ext-googleadsense
 
 
-
 ## Requirements
 * PHP 7.4.3 or later (tested up to 7.4.30)
 * MediaWiki 1.35 or later (tested up to 1.35)
