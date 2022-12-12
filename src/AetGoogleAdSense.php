@@ -266,7 +266,7 @@ EOT;
 		}
 
 		# 익명 사용자에게만 보여지게 하는 옵션이 있으면, 익명 사용자에게만 보여준다.
-		if ( $context->getUser()->isRegistered() && $config['anon_only'] ) {
+		if ( $config['anon_only'] && $context->getUser()->isRegistered() ) {
 			self::setDisabled();
 			return false;
 		}
