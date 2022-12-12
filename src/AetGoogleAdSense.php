@@ -6,7 +6,6 @@
  * @author exizt
  * @license GPL-2.0-or-later
  */
-
 class AetGoogleAdSense {
 	# 설정값을 갖게 되는 멤버 변수
 	private static $config = null;
