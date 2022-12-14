@@ -10,7 +10,7 @@ class AetGoogleAdSense {
 	# 설정값을 갖게 되는 멤버 변수
 	private static $config = null;
 
-	# 이용 가능한지 여부 (isAvailable 메소드에서 체크함)
+	# 이용 가능한지 여부 (isEnabled 메소드에서 체크함)
 	private static $_isAvailable = true;
 
 	/**
@@ -131,7 +131,7 @@ class AetGoogleAdSense {
 		}
 
 		// 유효성 체크
-		if( !self::isAvailable($config, $context) ){
+		if( !self::isEnabled($config, $context) ){
 			return false;
 		}
 
@@ -150,7 +150,7 @@ class AetGoogleAdSense {
 		}
 
 		# 유효성 체크
-		if( !self::isAvailable($config, $context) ){
+		if( !self::isEnabled($config, $context) ){
 			return false;
 		}
 
@@ -257,7 +257,7 @@ EOT;
 	/**
 	 * 조건 체크
 	 */
-	private static function isAvailable( $config, $context ){
+	private static function isEnabled( $config, $context ){
 		
 		# 기존의 체크에서 false 가 되었던 것이 있다면, 바로 false 리턴.
 		if( !self::$_isAvailable ){
@@ -279,7 +279,7 @@ EOT;
 			}
 		}
 
-		# self::debugLog("isAvailable");
+		# self::debugLog("isEnabled");
 		# self::debugLog($ns);
 
 		$titleObj = $context->getTitle();
