@@ -14,6 +14,34 @@ class AetGoogleAdSense {
 	private static $_isAvailable = true;
 
 	/**
+	 * 'BeforePageDisplay' 후킹.
+	 *
+	 * @param OutputPage $out
+	 * @param Skin $skin
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/BeforePageDisplay
+	 * @see https://github.com/wikimedia/mediawiki/blob/master/includes/Hook/BeforePageDisplayHook.php
+	 */
+	public static function onBeforePageDisplay( OutputPage $out, Skin $skin ) {
+		# 최소 유효성 체크
+		if( !self::isValid() ){
+			return;
+		}
+
+		# 설정값 조회
+		$config = self::getConfiguration();
+
+		# 유효성 체크
+		if( self::isEnabled( $config, $skin->getContext() ) ){
+			# HTML 문자열 생성
+			$html = self::getHeaderHTML( $config, $skin->getContext() );
+			if(!empty($html)){
+				$out->addHeadItem('gads', $html);
+			}
+		}
+
+	}
+
+	/**
 	 * 'ArticleViewHeader' 후킹.
 	 *
 	 * 상단 (본문 바로 위 영역)에 광고를 노출하고 싶을 때 사용.
@@ -120,6 +148,19 @@ class AetGoogleAdSense {
 	}
 
 	/**
+	 * 
+	 */
+	private static function getHeaderHTML( $config, $context ){
+		# auto_ads, top, bottom 셋다 false 인 경우는 동작하지 않음
+		if( !$config['auto_ads'] && !self::isValidAdsId( $config['unit_id_content_bottom'])
+		 	&& !self::isValidAdsId( $config['unit_id_content_top'] ) ){
+			return '';
+		}
+
+		return self::makeHeaderHTML($config['client_id']);
+	}
+
+	/**
 	 * 컨텐츠 상단에 표시될 HTML (상단 유닛 광고)
 	 */
 	private static function getTopAdsHTML( $config, $context ) {
@@ -165,6 +206,20 @@ class AetGoogleAdSense {
 			return self::makeAutoAdsHTML( $config['client_id'] );
 		}
 		return false;
+	}
+
+	/**
+	 * GoogleAdSense의 상단 헤더 스크립트 HTML
+	 */
+	private static function makeHeaderHTML( $clientId ): string{
+		if(! $clientId ){
+			return '';
+		}
+		$html = <<<EOT
+		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$clientId}"
+				crossorigin="anonymous"></script>
+		EOT;
+		return $html;
 	}
 
 	/**

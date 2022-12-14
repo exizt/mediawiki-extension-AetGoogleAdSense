@@ -13,6 +13,7 @@
         "AetGoogleAdSense": "src/AetGoogleAdSense.php"
     },
     "Hooks": {
+        "BeforePageDisplay": "AetGoogleAdSense::onBeforePageDisplay",
         "ArticleViewHeader": "AetGoogleAdSense::onArticleViewHeader",
         "SiteNoticeAfter": "AetGoogleAdSense::onSiteNoticeAfter",
         "ArticleViewFooter": "AetGoogleAdSense::onArticleViewFooter",
