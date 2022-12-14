@@ -284,7 +284,7 @@ EOT;
 		}
 
 		# global $wgAetGoogleAdsense;
-		$userSettings = self::getUserLocalSettings();
+		$userSettings = self::readSettings();
 
 		# 설정되어 있지 않음
 		if ( ! isset($userSettings) ){
@@ -431,7 +431,7 @@ EOT;
 	/**
 	 * 설정값 조회
 	 */
-	private static function getUserLocalSettings(){
+	private static function readSettings(){
 		global $wgAetGoogleAdsense;
 		return $wgAetGoogleAdsense;
 	}
@@ -449,7 +449,7 @@ EOT;
 		}
 		
 		# 로깅
-		$userSettings = self::getUserLocalSettings();
+		$userSettings = self::readSettings();
 		$isDebug = $userSettings['debug'] ?? false;
 		if($isDebug){
 			if(is_string($msg)){
