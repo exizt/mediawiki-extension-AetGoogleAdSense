@@ -139,9 +139,10 @@ class AetGoogleAdSense {
 					$data .= $banner;
 				}
 			}
-			return true;
+			# return true;
 		}
-		return false;
+		# return false;
+		return;
 	}
 
 	/**
