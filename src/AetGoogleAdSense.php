@@ -34,7 +34,7 @@ class AetGoogleAdSense {
 			if( self::isEnabledWithCheck( $config, $skin->getContext() ) ){
 				# HTML 문자열 생성
 				$html = self::getHeaderHTML( $config, $skin->getContext() );
-				if(!empty($html)){
+				if( !empty($html) ){
 					$out->addHeadItem('gads', $html);
 				}
 			}
@@ -146,6 +146,8 @@ class AetGoogleAdSense {
 	}
 
 	/**
+	 * 생성될 헤더 HTML 
+	 * 
 	 * @param array $config
 	 * @param IContextSource $context
 	 * @return string
@@ -200,7 +202,7 @@ class AetGoogleAdSense {
 	 * '자동 광고'와 '단위 광고'에서 script 호출 부분은 동일함.
 	 * 
 	 * @param string $clientId 애드센스 클라이언트 아이디
-	 * @return string
+	 * @return string HTML 문자열
 	 */
 	private static function makeHeaderHTML( $clientId ): string{
 		if(! $clientId ){
@@ -218,7 +220,7 @@ class AetGoogleAdSense {
 	 * 
 	 * @param string $clientId 애드센스 클라이언트 아이디
 	 * @param string $unitId 애드센스 광고 유닛 아이디
-	 * @return string HTML 결과
+	 * @return string HTML 문자열
 	 */
 	private static function makeBannerHTML( $clientId, $unitId ): string{
 		if(! $clientId || ! $unitId ){
@@ -250,8 +252,9 @@ EOT;
 	 * 
 	 * @return bool 검증 결과
 	 */
-	private static function isValid(){
+	private static function isValid(): bool{
 		if (self::$shouldValidate){
+			# 전역 설정 로드
 			$settings = self::readSettings();
 
 			# 설정되어 있지 않음
@@ -272,6 +275,7 @@ EOT;
 			return self::disable();
 
 		} else {
+			# 이미 한 번 검증했으므로 결과값을 그대로 반환.
 			return self::$isEnabled;
 		}
 	}
@@ -283,7 +287,7 @@ EOT;
 	 * @param IContextSource $context
 	 * @return bool 검증 결과
 	 */
-	private static function isEnabledWithCheck( $config, $context ){
+	private static function isEnabledWithCheck( $config, $context ): bool{
 		if( self::$shouldValidate ){
 			# 익명 사용자에게만 보여지게 하는 옵션이 있으면, 익명 사용자에게만 보여준다.
 			if ( $config['anon_only'] && $context->getUser()->isRegistered() ) {
@@ -324,6 +328,7 @@ EOT;
 			return true;
 
 		} else {
+			# 이미 한 번 검증했으므로 결과값을 그대로 반환.
 			return self::$isEnabled;
 		}
 	}
@@ -334,7 +339,7 @@ EOT;
 	 * @param $id 애드센스 ID 값
 	 * @return bool 검증 결과
 	 */
-	private static function isValidAdsId( $id ){
+	private static function isValidAdsId( $id ): bool{
 		if( ! is_string($id) || strlen($id) < 5 ) {
 			return false;
 		}
@@ -408,7 +413,7 @@ EOT;
 	}
 
 	/**
-	 * 설정값 조회
+	 * 전역 설정값 조회
 	 * 
 	 * @return array|mixed 설정된 값 또는 undefined|null를 반환
 	 */
