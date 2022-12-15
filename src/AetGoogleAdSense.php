@@ -435,8 +435,8 @@ EOT;
 		global $wgDebugToolbar;
 
 		# 디버그툴바 사용중일 때만 허용.
-		$useDebugToolbar = $wgDebugToolbar ?? false;
-		if( !$useDebugToolbar ){
+		$isDebugToolbarEnabled = $wgDebugToolbar ?? false;
+		if( !$isDebugToolbarEnabled ){
 			return;
 		}
 		
