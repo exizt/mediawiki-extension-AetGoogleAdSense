@@ -9,9 +9,12 @@
 class AetGoogleAdSense {
 	# 설정값을 갖게 되는 멤버 변수
 	private static $config = null;
-
+	
 	# 이용 가능한지 여부 (isEnabled 메소드에서 체크함)
-	private static $_isAvailable = true;
+	private static $isEnabled = false;
+
+	# 검증이 필요한지 여부
+	private static $shouldValidate = true;
 
 	/**
 	 * 'BeforePageDisplay' 후킹.
@@ -23,22 +26,20 @@ class AetGoogleAdSense {
 	 */
 	public static function onBeforePageDisplay( OutputPage $out, Skin $skin ) {
 		# 최소 유효성 체크
-		if( !self::isValid() ){
-			return;
-		}
-
-		# 설정값 조회
-		$config = self::getConfiguration();
-
-		# 유효성 체크
-		if( self::isEnabled( $config, $skin->getContext() ) ){
-			# HTML 문자열 생성
-			$html = self::getHeaderHTML( $config, $skin->getContext() );
-			if(!empty($html)){
-				$out->addHeadItem('gads', $html);
+		if( self::isValid() ){
+			# 설정값 조회
+			$config = self::getConfiguration();
+	
+			# 유효성 체크
+			if( self::isEnabledWithCheck( $config, $skin->getContext() ) ){
+				# HTML 문자열 생성
+				$html = self::getHeaderHTML( $config, $skin->getContext() );
+				if(!empty($html)){
+					$out->addHeadItem('gads', $html);
+				}
 			}
 		}
-
+		return;
 	}
 
 	/**
@@ -54,18 +55,17 @@ class AetGoogleAdSense {
 	 */
 	public static function onArticleViewHeader( &$article, &$outputDone, &$pcache ){
 		# 최소 유효성 체크
-		if( !self::isValid() ){
-			return;
-		}
-
-		# 설정값 조회
-		$config = self::getConfiguration();
-		if( $config['hook_enabled']['ArticleViewHeader'] ){
-			$result = self::getTopAdsHTML( $config, $article->getContext() );
-			if($result){
-				$article->getContext()->getOutput()->addHTML($result);
+		if( self::isValid() ){
+			# 설정값 조회
+			$config = self::getConfiguration();
+			if( $config['hook_enabled']['ArticleViewHeader'] ){
+				$banner = self::getTopBanner( $config, $article->getContext() );
+				if( !empty($banner) ){
+					$article->getContext()->getOutput()->addHTML($banner);
+				}
 			}
 		}
+		return;
 	}
 
 	/**
@@ -80,18 +80,17 @@ class AetGoogleAdSense {
 	 */
 	public static function onSiteNoticeAfter( &$siteNotice, $skin ){
 		# 최소 유효성 체크
-		if( !self::isValid() ){
-			return;
-		}
-
-		# 설정값 조회
-		$config = self::getConfiguration();
-		if( $config['hook_enabled']['SiteNoticeAfter'] ){
-			$result = self::getTopAdsHTML( $config, $skin->getContext() );
-			if($result){
-				$siteNotice .= $result;
+		if( self::isValid() ){
+			# 설정값 조회
+			$config = self::getConfiguration();
+			if( $config['hook_enabled']['SiteNoticeAfter'] ){
+				$banner = self::getTopBanner( $config, $skin->getContext() );
+				if( !empty($banner) ){
+					$siteNotice .= $banner;
+				}
 			}
 		}
+		return;
 	}
 
 	/**
@@ -106,18 +105,17 @@ class AetGoogleAdSense {
 	 */
 	public static function onArticleViewFooter( $article, bool $patrolFooterShown ){
 		# 최소 유효성 체크
-		if( !self::isValid() ){
-			return;
-		}
-
-		# 설정값 조회
-		$config = self::getConfiguration();
-		if( $config['hook_enabled']['ArticleViewFooter'] ){
-			$result = self::getBottomAdsHTML( $config, $article->getContext() );
-			if($result){
-				$article->getContext()->getOutput()->addHTML($result);
+		if( self::isValid() ){
+			# 설정값 조회
+			$config = self::getConfiguration();
+			if( $config['hook_enabled']['ArticleViewFooter'] ){
+				$banner = self::getBottomBanner( $config, $article->getContext() );
+				if( !empty($banner) ){
+					$article->getContext()->getOutput()->addHTML($banner);
+				}
 			}
 		}
+		return;
 	}
 
 	/**
@@ -132,84 +130,63 @@ class AetGoogleAdSense {
 	 */
 	public static function onSkinAfterContent(&$data, $skin) {
 		# 최소 유효성 체크
-		if( !self::isValid() ){
-			return false;
-		}
-
-		# 설정값 조회
-		$config = self::getConfiguration();
-		if( $config['hook_enabled']['SkinAfterContent'] ){
-			$result = self::getBottomAdsHTML( $config, $skin->getContext() );
-			if($result){
-				$data .= $result;
+		if( self::isValid() ){
+			# 설정값 조회
+			$config = self::getConfiguration();
+			if( $config['hook_enabled']['SkinAfterContent'] ){
+				$banner = self::getBottomBanner( $config, $skin->getContext() );
+				if($banner){
+					$data .= $banner;
+				}
 			}
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	/**
 	 * 
 	 */
 	private static function getHeaderHTML( $config, $context ){
-		# auto_ads, top, bottom 셋다 false 인 경우는 동작하지 않음
-		if( !$config['auto_ads'] && !self::isValidAdsId( $config['unit_id_content_bottom'])
-		 	&& !self::isValidAdsId( $config['unit_id_content_top'] ) ){
-			return '';
-		}
-
 		return self::makeHeaderHTML($config['client_id']);
 	}
 
 	/**
 	 * 컨텐츠 상단에 표시될 HTML (상단 유닛 광고)
 	 */
-	private static function getTopAdsHTML( $config, $context ) {
-		self::debugLog('::getTopAdsHTML');
+	private static function getTopBanner( $config, $context ): string {
+		self::debugLog('::getTopBanner');
 
-		# 해당되는 slot id가 지정되지 않았으면 보이지 않게 함
-		if( ! self::isValidAdsId( $config['unit_id_content_top'] ) ){
-			return false;
+		# 해당되는 slot id가 지정되어있을 때에만
+		if( self::isValidAdsId( $config['unit_id_content_top'] ) ){
+			# 활성화 여부
+			if( self::isEnabledWithCheck($config, $context) ){
+				return self::makeBannerHTML($config['client_id'], $config['unit_id_content_top']);
+			}
 		}
-
-		// 유효성 체크
-		if( !self::isEnabled($config, $context) ){
-			return false;
-		}
-
-		return self::makeBannerHTML($config['client_id'], $config['unit_id_content_top']);
+		return '';
 	}
 
 	/**
 	 * 컨텐츠 하단에 표시될 HTML (하단 유닛 광고 or 자동 광고 스크립트)
 	 */
-	private static function getBottomAdsHTML( $config, $context ){
-		self::debugLog('::getBottomAdsHTML');
-
-		# auto_ads가 false이면서, bottom_id도 제대로 지정되지 않을 경우에는 보이지 않게 함.
-		if( !$config['auto_ads'] && !self::isValidAdsId( $config['unit_id_content_bottom'] ) ){
-			return false;
-		}
-
-		# 유효성 체크
-		if( !self::isEnabled($config, $context) ){
-			return false;
-		}
+	private static function getBottomBanner( $config, $context ): string{
+		self::debugLog('::getBottomBanner');
 
 		# bottom_id가 지정되어있는 경우에만 출력.
 		if( self::isValidAdsId( $config['unit_id_content_bottom'] ) ){
-			$result = self::makeBannerHTML($config['client_id'], $config['unit_id_content_bottom']);
-			if($result){
-				return $result;
+			# 활성화 여부
+			if( self::isEnabledWithCheck($config, $context) ){
+				return self::makeBannerHTML($config['client_id'], $config['unit_id_content_bottom']);
 			}
-		} else if( $config['auto_ads'] && !self::isValidAdsId( $config['unit_id_content_top'] ) ){
-			# 자동 광고가 설정되어있고, top과 bottom 둘 다 사용되지 않을 때, 여기서 코드를 추가.
-			return self::makeAutoAdsHTML( $config['client_id'] );
 		}
-		return false;
+		return '';
 	}
 
 	/**
-	 * GoogleAdSense의 상단 헤더 스크립트 HTML
+	 * GoogleAdSense의 상단 헤더 스크립트 HTML.
+	 * 
+	 * '자동 광고'와 '단위 광고'에서 script 호출 부분은 동일함.
 	 */
 	private static function makeHeaderHTML( $clientId ): string{
 		if(! $clientId ){
@@ -223,32 +200,18 @@ class AetGoogleAdSense {
 	}
 
 	/**
-	 * '자동 광고'의 HTML 생성
-	 */
-	private static function makeAutoAdsHTML( $clientId ){
-		if(! $clientId ){
-			return '';
-		}
-		$html = <<<EOT
-		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$clientId}"
-				crossorigin="anonymous"></script>
-		EOT;
-		return $html;
-	}
-
-	/**
 	 * '배너 단위 광고'의 HTML 생성
 	 */
-	private static function makeBannerHTML( $clientId, $unitId ){
+	private static function makeBannerHTML( $clientId, $unitId ): string{
 		if(! $clientId || ! $unitId ){
 			return '';
 		}
-		$html = <<<EOT
-		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$clientId}"
-				crossorigin="anonymous"></script>
-		EOT;
+		# $html = <<<EOT
+		# <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={$clientId}"
+		# 		crossorigin="anonymous"></script>
+		# EOT;
 
-		$html .= <<< EOT
+		$html = <<< EOT
 <ins class="adsbygoogle"
      style="display:block"
      data-ad-client="{$clientId}"
@@ -276,88 +239,83 @@ EOT;
 	 * 최소 조건 체크.
 	 * 
 	 * 확장 기능이 동작할 수 있는지에 대한 최소 조건 체크. 성능상 부담이 없도록 구성.
+	 * 
+	 * 인자값을 따로 받지 않음.
 	 */
 	private static function isValid(){
-		# 기존의 체크에서 false 가 되었던 것이 있다면, 바로 false 리턴.
-		if( !self::$_isAvailable ){
-			return false;
-		}
+		if (self::$shouldValidate){
+			$settings = self::readSettings();
 
-		# global $wgAetGoogleAdsense;
-		$userSettings = self::readSettings();
-
-		# 설정되어 있지 않음
-		if ( ! isset($userSettings) ){
-			self::setDisabled();
-			return false;
-		}
-
-		# 'client_id'가 유효함
-		$clientId = $userSettings['client_id'] ?? '';
-		if ( self::isValidAdsId($clientId) ){
-			return true;
-		}
-
-		self::setDisabled();
-		return false;
-	}
-
-	/**
-	 * '사용 안 함'을 설정.
-	 */
-	private static function setDisabled(){
-		self::$_isAvailable = false;
-	}
-
-	/**
-	 * 조건 체크
-	 */
-	private static function isEnabled( $config, $context ){
-		
-		# 기존의 체크에서 false 가 되었던 것이 있다면, 바로 false 리턴.
-		if( !self::$_isAvailable ){
-			return false;
-		}
-
-		# 익명 사용자에게만 보여지게 하는 옵션이 있으면, 익명 사용자에게만 보여준다.
-		if ( $config['anon_only'] && $context->getUser()->isRegistered() ) {
-			self::setDisabled();
-			return false;
-		}
-
-		# 특정 아이피에서는 애드센스를 노출하지 않도록 한다. (예를 들어, 관리자)
-		if ( ! empty($config['exclude_ip_list']) ){
-			$remoteAddr = $_SERVER["REMOTE_ADDR"] ?? '';
-			if( in_array($remoteAddr, $config['exclude_ip_list']) ){
-				self::setDisabled();
-				return false;
+			# 설정되어 있지 않음
+			if ( ! isset($settings) ){
+				return self::disable();
 			}
+
+			# 'client_id'가 유효함
+			$clientId = $settings['client_id'] ?? '';
+			if ( self::isValidAdsId($clientId) ){
+				if($settings['auto_ads'] || self::isValidAdsId( $settings['unit_id_content_bottom'])
+					|| self::isValidAdsId( $settings['unit_id_content_top'] )){
+						return true;
+				}
+			}
+
+			# 검증을 통과하지 못하였으므로 disabled
+			return self::disable();
+
+		} else {
+			return self::$isEnabled;
+		}
+	}
+
+	/**
+	 * 조건 체크 및 활성화 여부 반환
+	 */
+	private static function isEnabledWithCheck( $config, $context ){
+		if( self::$shouldValidate ){
+			# 익명 사용자에게만 보여지게 하는 옵션이 있으면, 익명 사용자에게만 보여준다.
+			if ( $config['anon_only'] && $context->getUser()->isRegistered() ) {
+				return self::disable();
+			}
+	
+			# 특정 아이피에서는 애드센스를 노출하지 않도록 한다. (예를 들어, 관리자)
+			if ( ! empty($config['exclude_ip_list']) ){
+				$remoteAddr = $_SERVER["REMOTE_ADDR"] ?? '';
+				if( in_array($remoteAddr, $config['exclude_ip_list']) ){
+					return self::disable();
+				}
+			}
+
+			# self::debugLog("isEnabled");
+			# self::debugLog($ns);
+	
+			$titleObj = $context->getTitle();
+	
+			// 메인 이름공간의 페이지에서만 나오도록 함. 특수문서 등에서 나타나지 않도록.
+			if( $titleObj->getNamespace() != NS_MAIN ){
+				return self::disable();
+			}
+	
+			# 대문 페이지에서도 안 나오게하기
+			if( $titleObj->isMainPage() ){
+				return self::disable();
+			}
+	
+			# 본문의 길이가 짧을 때에는 광고를 출력하지 않도록 설정.
+			if( $titleObj->getLength() <= $config['min_length'] ) {
+				return self::disable();
+			}
+
+			# 검증을 통과하였고 isEnabled=true이다.
+			self::$shouldValidate = false;
+			self::$isEnabled = true;
+			return true;
+
+		} else {
+			return self::$isEnabled;
 		}
 
-		# self::debugLog("isEnabled");
-		# self::debugLog($ns);
 
-		$titleObj = $context->getTitle();
-
-		// 메인 이름공간의 페이지에서만 나오도록 함. 특수문서 등에서 나타나지 않도록.
-		if( $titleObj->getNamespace() != NS_MAIN ){
-			self::setDisabled();
-			return false;
-		}
-
-		# 대문 페이지에서도 안 나오게하기
-		if( $titleObj->isMainPage() ){
-			self::setDisabled();
-			return false;
-		}
-
-		# 본문의 길이가 짧을 때에는 광고를 출력하지 않도록 설정.
-		if( $titleObj->getLength() <= $config['min_length'] ) {
-			self::setDisabled();
-			return false;
-		}
-
-		return true;
 	}
 
 	/**
@@ -366,9 +324,7 @@ EOT;
 	private static function getConfiguration(){
 		# 한 번 로드했다면, 그 후에는 로드하지 않도록 처리.
 		if(self::$config){
-			if(isset(self::$config['client_id'])){
-				return self::$config;
-			}
+			return self::$config;
 		}
 		self::debugLog('::getConfiguration');
 
@@ -437,6 +393,15 @@ EOT;
 	}
 
 	/**
+	 * '사용 안 함'을 설정.
+	 */
+	private static function disable(){
+		self::$shouldValidate = false;
+		self::$isEnabled = false;
+		return false;
+	}
+
+	/**
 	 * 디버그 로깅 관련
 	 */
 	private static function debugLog($msg){
@@ -449,8 +414,8 @@ EOT;
 		}
 		
 		# 로깅
-		$userSettings = self::readSettings();
-		$isDebug = $userSettings['debug'] ?? false;
+		$settings = self::readSettings() ?? [];
+		$isDebug = $settings['debug'] ?? false;
 		if($isDebug){
 			if(is_string($msg)){
 				wfDebugLog(static::class, $msg);
