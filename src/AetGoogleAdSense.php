@@ -413,16 +413,6 @@ EOT;
 	}
 
 	/**
-	 * 전역 설정값 조회
-	 * 
-	 * @return array|null 설정된 값 또는 undefined|null를 반환
-	 */
-	private static function readSettings(){
-		global $wgAetGoogleAdsense;
-		return $wgAetGoogleAdsense;
-	}
-
-	/**
 	 * '사용 안 함'을 설정.
 	 * 
 	 * @return false false 반환.
@@ -431,6 +421,16 @@ EOT;
 		self::$shouldValidate = false;
 		self::$isEnabled = false;
 		return false;
+	}
+
+	/**
+	 * 전역 설정값 조회
+	 * 
+	 * @return array|null 설정된 값 또는 undefined|null를 반환
+	 */
+	private static function readSettings(){
+		global $wgAetGoogleAdsense;
+		return $wgAetGoogleAdsense;
 	}
 
 	/**
