@@ -146,14 +146,20 @@ class AetGoogleAdSense {
 	}
 
 	/**
-	 * 
+	 * @param array $config
+	 * @param IContextSource $context
+	 * @return string
 	 */
-	private static function getHeaderHTML( $config, $context ){
+	private static function getHeaderHTML( $config, $context ): string{
 		return self::makeHeaderHTML($config['client_id']);
 	}
 
 	/**
 	 * 컨텐츠 상단에 표시될 HTML (상단 유닛 광고)
+	 * 
+	 * @param array $config
+	 * @param IContextSource $context
+	 * @return string
 	 */
 	private static function getTopBanner( $config, $context ): string {
 		self::debugLog('::getTopBanner');
@@ -170,6 +176,10 @@ class AetGoogleAdSense {
 
 	/**
 	 * 컨텐츠 하단에 표시될 HTML (하단 유닛 광고 or 자동 광고 스크립트)
+	 * 
+	 * @param array $config
+	 * @param IContextSource $context
+	 * @return string
 	 */
 	private static function getBottomBanner( $config, $context ): string{
 		self::debugLog('::getBottomBanner');
@@ -188,6 +198,9 @@ class AetGoogleAdSense {
 	 * GoogleAdSense의 상단 헤더 스크립트 HTML.
 	 * 
 	 * '자동 광고'와 '단위 광고'에서 script 호출 부분은 동일함.
+	 * 
+	 * @param string $clientId 애드센스 클라이언트 아이디
+	 * @return string
 	 */
 	private static function makeHeaderHTML( $clientId ): string{
 		if(! $clientId ){
@@ -202,6 +215,10 @@ class AetGoogleAdSense {
 
 	/**
 	 * '배너 단위 광고'의 HTML 생성
+	 * 
+	 * @param string $clientId 애드센스 클라이언트 아이디
+	 * @param string $unitId 애드센스 광고 유닛 아이디
+	 * @return string HTML 결과
 	 */
 	private static function makeBannerHTML( $clientId, $unitId ): string{
 		if(! $clientId || ! $unitId ){
@@ -227,21 +244,11 @@ EOT;
 	}
 
 	/**
-	 * AdSense의 ID가 제대로된 입력값인지 확인.
-	 */
-	private static function isValidAdsId( $id ){
-		if( ! is_string($id) || strlen($id) < 5 ) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
 	 * 최소 조건 체크.
+	 * - 확장 기능이 동작할 수 있는지에 대한 최소 조건 체크. 성능상 부담이 없도록 구성.
+	 * - 인자값을 따로 받지 않음.
 	 * 
-	 * 확장 기능이 동작할 수 있는지에 대한 최소 조건 체크. 성능상 부담이 없도록 구성.
-	 * 
-	 * 인자값을 따로 받지 않음.
+	 * @return bool 검증 결과
 	 */
 	private static function isValid(){
 		if (self::$shouldValidate){
@@ -271,6 +278,10 @@ EOT;
 
 	/**
 	 * 조건 체크 및 활성화 여부 반환
+	 * 
+	 * @param array $config
+	 * @param IContextSource $context
+	 * @return bool 검증 결과
 	 */
 	private static function isEnabledWithCheck( $config, $context ){
 		if( self::$shouldValidate ){
@@ -315,8 +326,19 @@ EOT;
 		} else {
 			return self::$isEnabled;
 		}
-
-
+	}
+	
+	/**
+	 * AdSense의 ID가 제대로된 입력값인지 확인.
+	 * 
+	 * @param $id 애드센스 ID 값
+	 * @return bool 검증 결과
+	 */
+	private static function isValidAdsId( $id ){
+		if( ! is_string($id) || strlen($id) < 5 ) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -387,6 +409,8 @@ EOT;
 
 	/**
 	 * 설정값 조회
+	 * 
+	 * @return array|mixed 설정된 값 또는 undefined|null를 반환
 	 */
 	private static function readSettings(){
 		global $wgAetGoogleAdsense;
@@ -395,8 +419,10 @@ EOT;
 
 	/**
 	 * '사용 안 함'을 설정.
+	 * 
+	 * @return false false 반환.
 	 */
-	private static function disable(){
+	private static function disable(): bool{
 		self::$shouldValidate = false;
 		self::$isEnabled = false;
 		return false;
@@ -411,7 +437,7 @@ EOT;
 		# 디버그툴바 사용중일 때만 허용.
 		$useDebugToolbar = $wgDebugToolbar ?? false;
 		if( !$useDebugToolbar ){
-			return false;
+			return;
 		}
 		
 		# 로깅
@@ -423,8 +449,6 @@ EOT;
 			} else {
 				wfDebugLog(static::class, json_encode($msg));
 			}
-		} else {
-			return false;
 		}
 	}
 }
