@@ -415,7 +415,7 @@ EOT;
 	/**
 	 * 전역 설정값 조회
 	 * 
-	 * @return array|mixed 설정된 값 또는 undefined|null를 반환
+	 * @return array|null 설정된 값 또는 undefined|null를 반환
 	 */
 	private static function readSettings(){
 		global $wgAetGoogleAdsense;
