@@ -9,7 +9,7 @@
 class AetGoogleAdSense {
 	# 설정값을 갖게 되는 멤버 변수
 	private static $config = null;
-	
+
 	# 이용 가능한지 여부 (isEnabled 메소드에서 체크함)
 	private static $isEnabled = false;
 
@@ -29,7 +29,7 @@ class AetGoogleAdSense {
 		if( self::isValid() ){
 			# 설정값 조회
 			$config = self::getConfiguration();
-	
+
 			# 유효성 체크
 			if( self::isEnabledWithCheck( $config, $skin->getContext() ) ){
 				# HTML 문자열 생성
@@ -46,7 +46,7 @@ class AetGoogleAdSense {
 	 * 'ArticleViewHeader' 후킹.
 	 *
 	 * 상단 (본문 바로 위 영역)에 광고를 노출하고 싶을 때 사용.
-	 * 
+	 *
 	 * @param Article $article
 	 * @param bool|ParserOutput &$outputDone
 	 * @param bool &$pcache
@@ -120,7 +120,7 @@ class AetGoogleAdSense {
 
 	/**
 	 * 'SkinAfterContent'후킹.
-	 * 
+	 *
 	 * 본문 영역보다 좀 더 하위에 광고를 노출하고 싶을 때 사용.
 	 *
 	 * @param string &$data
@@ -146,8 +146,8 @@ class AetGoogleAdSense {
 	}
 
 	/**
-	 * 생성될 헤더 HTML 
-	 * 
+	 * 생성될 헤더 HTML
+	 *
 	 * @param array $config
 	 * @param IContextSource $context
 	 * @return string
@@ -158,7 +158,7 @@ class AetGoogleAdSense {
 
 	/**
 	 * 컨텐츠 상단에 표시될 HTML (상단 유닛 광고)
-	 * 
+	 *
 	 * @param array $config
 	 * @param IContextSource $context
 	 * @return string
@@ -178,7 +178,7 @@ class AetGoogleAdSense {
 
 	/**
 	 * 컨텐츠 하단에 표시될 HTML (하단 유닛 광고 or 자동 광고 스크립트)
-	 * 
+	 *
 	 * @param array $config
 	 * @param IContextSource $context
 	 * @return string
@@ -198,9 +198,9 @@ class AetGoogleAdSense {
 
 	/**
 	 * GoogleAdSense의 상단 헤더 스크립트 HTML.
-	 * 
+	 *
 	 * '자동 광고'와 '단위 광고'에서 script 호출 부분은 동일함.
-	 * 
+	 *
 	 * @param string $clientId 애드센스 클라이언트 아이디
 	 * @return string HTML 문자열
 	 */
@@ -217,7 +217,7 @@ class AetGoogleAdSense {
 
 	/**
 	 * '배너 단위 광고'의 HTML 생성
-	 * 
+	 *
 	 * @param string $clientId 애드센스 클라이언트 아이디
 	 * @param string $unitId 애드센스 광고 유닛 아이디
 	 * @return string HTML 문자열
@@ -249,7 +249,7 @@ EOT;
 	 * 최소 조건 체크.
 	 * - 확장 기능이 동작할 수 있는지에 대한 최소 조건 체크. 성능상 부담이 없도록 구성.
 	 * - 인자값을 따로 받지 않음.
-	 * 
+	 *
 	 * @return bool 검증 결과
 	 */
 	private static function isValid(): bool{
@@ -282,7 +282,7 @@ EOT;
 
 	/**
 	 * 조건 체크 및 활성화 여부 반환
-	 * 
+	 *
 	 * @param array $config
 	 * @param IContextSource $context
 	 * @return bool 검증 결과
@@ -293,7 +293,7 @@ EOT;
 			if ( $config['anon_only'] && $context->getUser()->isRegistered() ) {
 				return self::disable();
 			}
-	
+
 			# 특정 아이피에서는 애드센스를 노출하지 않도록 한다. (예를 들어, 관리자)
 			if ( ! empty($config['exclude_ip_list']) ){
 				$remoteAddr = $_SERVER["REMOTE_ADDR"] ?? '';
@@ -304,19 +304,19 @@ EOT;
 
 			# self::debugLog("isEnabled");
 			# self::debugLog($ns);
-	
+
 			$titleObj = $context->getTitle();
-	
+
 			// 메인 이름공간의 페이지에서만 나오도록 함. 특수문서 등에서 나타나지 않도록.
 			if( $titleObj->getNamespace() != NS_MAIN ){
 				return self::disable();
 			}
-	
+
 			# 대문 페이지에서도 안 나오게하기
 			if( $titleObj->isMainPage() ){
 				return self::disable();
 			}
-	
+
 			# 본문의 길이가 짧을 때에는 광고를 출력하지 않도록 설정.
 			if( $titleObj->getLength() <= $config['min_length'] ) {
 				return self::disable();
@@ -332,10 +332,10 @@ EOT;
 			return self::$isEnabled;
 		}
 	}
-	
+
 	/**
 	 * AdSense의 ID가 제대로된 입력값인지 확인.
-	 * 
+	 *
 	 * @param $id 애드센스 ID 값
 	 * @return bool 검증 결과
 	 */
@@ -360,7 +360,7 @@ EOT;
 
 		/*
 		* 설정 기본값
-		* 
+		*
 		* client_id : 애드센스 id key 값. (예: ca-pub-xxxxxxxxx)
 		* unit_id_content_top : 콘텐츠 상단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
 		* unit_id_content_bottom : 콘텐츠 히단에 표시할 애드센스 광고 단위 아이디 (예: xxxxxxx)
@@ -384,7 +384,7 @@ EOT;
 			'ArticleViewFooter' => true,
 			'SkinAfterContent' => false,
 		];
-		
+
 		# 설정값 병합
 		if (isset($wgAetGoogleAdsense)){
 			foreach ($wgAetGoogleAdsense as $key => $value) {
@@ -414,7 +414,7 @@ EOT;
 
 	/**
 	 * '사용 안 함'을 설정.
-	 * 
+	 *
 	 * @return false false 반환.
 	 */
 	private static function disable(): bool{
@@ -425,7 +425,7 @@ EOT;
 
 	/**
 	 * 전역 설정값 조회
-	 * 
+	 *
 	 * @return array|null 설정된 값 또는 undefined|null를 반환
 	 */
 	private static function readSettings(){
@@ -435,7 +435,7 @@ EOT;
 
 	/**
 	 * 디버그 로깅 관련
-	 * 
+	 *
 	 * @param string|object $msg 디버깅 메시지 or 오브젝트
 	 */
 	private static function debugLog($msg){
@@ -446,7 +446,7 @@ EOT;
 		if( !$isDebugToolbarEnabled ){
 			return;
 		}
-		
+
 		# 로깅
 		$settings = self::readSettings() ?? [];
 		$isDebug = $settings['debug'] ?? false;
