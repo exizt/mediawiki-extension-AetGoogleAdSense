@@ -1,8 +1,7 @@
 # AetGoogleAdSense
 The AetGoogleAdSense extension lets you display Google AdSense in wiki pages and you can set up some settings.
 
-Links
-* Git : https://github.com/exizt/mediawiki-extension-AetGoogleAdSense
+- Link: https://github.com/exizt/mediawiki-extension-AetGoogleAdSense
 
 ## Requirements
 * PHP 7.4.3 or later (tested up to 7.4.30)
